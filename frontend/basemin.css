@@ -1,0 +1,33 @@
+
+/* #region roles */
+.grid_roles {
+  display: flex;
+  gap: 12px;
+	justify-content: center;
+	align-items: center;
+}
+
+
+/* #endregion progressbar */
+
+/* #region progressbar */
+.grid_progressbar {
+  display: grid;
+  gap: 12px 12px;
+	grid-template-columns: 1fr 19fr;
+}
+.progressbar {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  background-color: #ddd;
+}
+.barstatus {
+  position: absolute;
+  width: 10%;
+  height: 100%;
+}
+
+
+/* #endregion progressbar */
+

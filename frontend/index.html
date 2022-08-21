@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>feedback</title>
+		<link rel="icon" type="image/svg+xml" href="./favicon.ico" />
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+			integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="./basemin.css" />
+		<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+		<script>
+			// var socket = io('http://localhost:3000');
+			// // use your socket
+			// socket.on('welcome', (message) => {
+			// 	// do something with the message.
+			// 	console.log(message);
+			// });
+		</script>
+	</head>
+	<body>
+		<section class="vh-100">
+			<div class="h-100 w-100">
+				<div id="dAdmin" style="height: 38px" class="w-100 p-2 d-flex align-items-center justify-content-between">
+					<div id="dAdminLeft"></div>
+					<div id="dAdminMiddle"></div>
+					<div id="dAdminRight"></div>
+				</div>
+				<div id="dHeader" class="h-20">
+					<div class="d-flex flex-column align-items-center justify-content-center h-50">
+						<h1>Your Role:</h1>
+						<br />
+						<button type="submit" class="w-25 btn btn-success" id="newGameButton">Host</button>
+						<br />
+						<button type="submit" class="w-25 btn btn-success" id="joinGameButton">Guest</button>
+					</div>
+				</div>
+				<div id="dMain" class="mh-50 w-100 m-0">
+					<div id="dMMM" style="position: absolute; background: red; color: yellow; width: 100%; text-align: center"></div>
+					<div id="dTitle" style="display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; height: 42px; width: 100%">
+						<div id="dTitleLeft" style="display: flex; justify-content: space-evenly; align-items: center; padding-left: 10px"></div>
+						<div id="dTitleMiddle" style="font-size: 24px"></div>
+						<div id="dTitleRight" style="min-width: 200px; display: flex; justify-content: end; align-items: center; box-sizing: border-box"></div>
+					</div>
+					<div id="dScreen" class="py-2">
+						<div id="dTable" class="p-2"></div>
+						<div id="dMenu" class="section"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<script src="./basemin.js"></script>
+		<script src="./feedback.js"></script>
+		<script src="./index.js"></script>
+	</body>
+</html>
