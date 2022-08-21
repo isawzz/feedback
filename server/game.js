@@ -31,6 +31,11 @@ function gameLoop(state) {
 	return false; // (green.width === red.width); //end condition! (for now)
 
 }
+
+function decay() {
+	
+}
+
 function getWidthIncrement(color) { return color === 'green' ? INCGREEN : INCRED; }
 
 

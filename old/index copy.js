@@ -1,5 +1,5 @@
 onload = start;
-var socket, greenbar, redbar, game_running, lastgreen=0, lastred=0, granularity, num_calls = 0, num_painted = 0;
+var socket, greenbar, redbar, game_running, lastgreen, lastred, granularity, num_calls = 0, num_painted = 0;
 
 function start() {
 	socket = io('http://localhost:3000');
@@ -21,9 +21,9 @@ function initTable() {
 	mStyle(dTable, { hmin: 500 });
 	let d = mDiv(dTable, { w: '100%', box: true, opacity: 0 }, 'dBars');
 	mLinebreak(d);
-	dgreen = get_progressbar(d, 'green', '+').bar;
+	dgreen = get_progressbar(d, 'green', '+');
 	mLinebreak(d);
-	dred = get_progressbar(d, 'red', '-').bar;
+	dred = get_progressbar(d, 'red', '-');
 	mLinebreak(d);
 
 	mAppear(d, 500, null, 'linear');
@@ -43,13 +43,14 @@ function get_progressbar(dParent, color, sym) {
 function onclick_plus_minus(color) { socket.emit('plus', color); }
 
 function paintGame(state) {
-	let [wgreen, wred] = [state.green.width, state.red.width];
-	// dgreen.style.width = wgreen + '%';
-	// dred.style.width = wred + '%';
+
+	//only repaint if changed by 1
+	console.log('hallo')
 
 	num_calls++;
-	if (Math.abs(lastgreen - wgreen) > granularity) { dgreen.style.width = wgreen + '%'; num_painted += .5;  lastgreen = wgreen; }
-	if (Math.abs(lastred - wred) > granularity) { dred.style.width = wred + '%'; num_painted += .5;  lastred = wred; }
+	let [wgreen, wred] = [state.green.width, state.red.width];
+	if (Math.abs(lastgreen - wgreen) >= granularity) { num_painted += .5; dgreen.style.width = wgreen + '%'; lastgreen = wgreen; }
+	if (Math.abs(lastred - wred) >= granularity) { num_painted += .5; dgreen.style.width = wred + '%'; lastred = wred; }
 
 }
 

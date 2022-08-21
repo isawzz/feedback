@@ -19,11 +19,26 @@ const io = require('socket.io')(server, {
 //#endregion
 const { createGameState, gameLoop, getWidthIncrement } = require('./game');
 const { FRAMERATE, WINIT } = require('./constants');
-var state = null;
+
+//#region io handlers stages
+//stage 0
+//io.on('connection', client => { client.emit("init", "welcome man!!!!"); });
+
+// io.on('connection', client => {
+// 	client.emit("welcome", "welcome man");
+// 	client.emit("init", "welcome man!!!!");
+
+// 	handleConnection(client);
+// 	client.on('disconnect', () => handleDisconnect(client));
+// 	client.on('fromClient', x => handleFromClient(client, x));
+// 	client.on('ping', x => handlePing(client, x));
+// });
+
+//#endregion
 
 //stage 1
 io.on('connection', client => {
-	if (!state) state = createGameState();
+	const state = createGameState();
 
 	client.on('plus',handlePlus);
 
