@@ -11,7 +11,8 @@ function start() {
 	// socket.on('tooManyPlayers', handleTooManyPlayers);
 	//endregion
 
-	socket = io('http://localhost:3000');
+	//socket = io('http://localhost:3000');
+	socket = io('https://feedbackserver.herokuapp.com/');
 	// use your socket
 	socket.on('welcome', (message) => {console.log(message);	});
 	socket.on('init', handleInit);
