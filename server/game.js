@@ -19,7 +19,7 @@ function gameLoop(state) {
 	const green = state.green;
 	const red = state.red;
 
-	green.width = bounded(green.width, -0.01, 0, 100);
+	green.width = bounded(green.width, green.vel, 0, 100);
 	red.width = bounded(red.width, red.vel, 0, 100);
 
 	//friction: velocity automatically reduced by .1 every tick
