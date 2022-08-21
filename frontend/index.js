@@ -29,9 +29,9 @@ function start() {
 	newGameBtn.addEventListener('click', joinAsHost);
 	joinGameBtn.addEventListener('click', joinAsGuest);
 	DA.gameActive = false;
-	document.addEventListener('keydown', keydown);
-	initTable();
-	paintGame(DA.state);
+	//document.addEventListener('keydown', keydown);
+	//initTable();
+	//paintGame(DA.state);
 }
 
 function joinAsHost() {
