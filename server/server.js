@@ -43,19 +43,19 @@ function handleConnection(client) {
 function handlePause() {
 	console.log('pause');
 	clearInterval(intervalId); game_running = false;
-	io.emit('message', { mgs: 'feedback server paused' });
+	io.emit('message', { msg: 'feedback server paused' });
 }
 function handleResume() {
 	console.log('resume');
 	startGameInterval(state);
-	io.emit('message', { mgs: 'feedback server running' });
+	io.emit('message', { msg: 'feedback server running' });
 }
 function handleReset() {
 	console.log('reset');
 	clearInterval(intervalId); game_running = false;
 	state = createGameState();
 	startGameInterval(state);
-	io.emit('message', { mgs: 'feedback server reset' });
+	io.emit('message', { msg: 'feedback server reset' });
 }
 function handleButton(x) {
 	io.emit('message', { msg: x == 'green' ? 'plus' : 'minus' });

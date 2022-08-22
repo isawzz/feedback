@@ -14,37 +14,24 @@
 	</head>
 	<body>
 		<section class="vh-100">
-			<div class="h-100 w-100">
-				<div id="dAdmin" style="height: 38px" class="w-100 p-2 d-flex align-items-center justify-content-between">
-					<div id="dAdminLeft"></div>
-					<div id="dAdminMiddle"></div>
-					<div id="dAdminRight"></div>
-				</div>
-				<div id="dHeader" class="h-20 d-none">
-					<div class="d-flex flex-column align-items-center justify-content-center h-50">
-						<h1>Your Role:</h1>
-						<br />
-						<button type="submit" class="w-25 btn btn-success" id="newGameButton">Host</button>
-						<br />
-						<button type="submit" class="w-25 btn btn-success" id="joinGameButton">Guest</button>
-					</div>
-				</div>
-				<div id="dMain" class="mh-50 w-100 m-0">
-					<div id="dMMM" style="position: absolute; background: red; color: yellow; width: 100%; text-align: center"></div>
-					<div id="dTitle" style="display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; height: 42px; width: 100%">
-						<div id="dTitleLeft" style="display: flex; justify-content: space-evenly; align-items: center; padding-left: 10px"></div>
-						<div id="dTitleMiddle" style="font-size: 24px"></div>
-						<div id="dTitleRight" style="min-width: 200px; display: flex; justify-content: end; align-items: center; box-sizing: border-box"></div>
-					</div>
-					<div id="dScreen" class="py-2">
-						<div id="dTable" class="p-2"></div>
-						<div id="dMenu" class="section"></div>
-					</div>
+			<div id="dAdmin" style="height: 45px; font-size: 20pt" class="w-100 p-2 d-flex align-items-center justify-content-between">
+				<div id="dAdminLeft">Cosensus</div>
+				<div id="dAdminMiddle"></div>
+				<div id="dAdminRight"></div>
+			</div>
+			<div id="dHeader" class="h-20 d-none">
+				<div class="d-flex flex-column align-items-center justify-content-center h-50">
+					<h1>Your Role:</h1>
+					<br />
+					<button type="submit" class="w-25 btn btn-success" id="newGameButton">Host</button>
+					<br />
+					<button type="submit" class="w-25 btn btn-success" id="joinGameButton">Guest</button>
 				</div>
 			</div>
+			<div id="dTable" class="mh-50 w-100 m-0 p-2"></div>
 		</section>
 
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js'></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 		<script src="./basemin.js"></script>
 		<script src="./index.js"></script>
 	</body>
