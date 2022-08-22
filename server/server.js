@@ -19,8 +19,9 @@ const io = require('socket.io')(server, {
 //#endregion
 const { createGameState, gameLoop, processEvent } = require('./game');
 const { FRAMERATE, WINIT } = require('./constants');
+
 var state = null;
-var game_running = null;
+var game_running = false, intervalId = null;
 
 //stage 1
 io.on('connection', client => {
@@ -37,11 +38,11 @@ function handleConnection(client) {
 	client.emit('message', { msg: `welcome to the feedback server` });
 
 	if (!state) state = createGameState();
-	if (!game_running) startGameInterval(state);
+	startGameInterval(state);
 }
 function handlePause() {
 	console.log('pause');
-	clearInterval(game_running);
+	clearInterval(intervalId); game_running = false;
 	io.emit('message', { mgs: 'feedback server paused' });
 }
 function handleResume() {
@@ -51,7 +52,9 @@ function handleResume() {
 }
 function handleReset() {
 	console.log('reset');
+	clearInterval(intervalId); game_running = false;
 	state = createGameState();
+	startGameInterval(state);
 	io.emit('message', { mgs: 'feedback server reset' });
 }
 function handleButton(x) {
@@ -63,7 +66,7 @@ function handleButton(x) {
 function startGameInterval(state) {
 	if (game_running) return;
 	game_running = true;
-	const intervalId = setInterval(() => {
+	intervalId = setInterval(() => {
 
 		let end = gameLoop(state);
 		//console.log('end:', end);
@@ -71,7 +74,8 @@ function startGameInterval(state) {
 			io.emit('gamestate', JSON.stringify(state));
 		} else {
 			io.emit('gameover');
-			clearInterval(intervalId);
+			clearInterval(intervalId); game_running = false;
+
 		}
 		state.red.width += state.red.vel;
 		state.green.width += state.green.vel;
