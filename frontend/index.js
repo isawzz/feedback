@@ -2,6 +2,7 @@ onload = start;
 var socket, greenbar, redbar, game_running, lastgreen=0, lastred=0, granularity, num_calls = 0, num_painted = 0;
 
 function start() {
+
 	//socket = io('http://localhost:3000');
 	socket = io('https://feedbackserver.herokuapp.com/');
 
@@ -40,21 +41,22 @@ function init_ui() {
 
 	//set granularity depending on screen size
 	granularity = 100 / window.innerWidth; console.log('granularity:', granularity);
-	mStyle(dTable, { hmin: 500 });
+	mStyle(dTable, { hmin: 300 });
 	let d = mDiv(dTable, { w: '100%', box: true, opacity: 0 }, 'dBars');
-	mLinebreak(d);
-	dgreen = get_progressbar(d, 'green', '+').bar;
-	mLinebreak(d);
-	dred = get_progressbar(d, 'red', '-').bar;
-	mLinebreak(d);
-
 	mAppear(d, 500, null, 'linear');
+	mLinebreak(d,40);
 
-	let d1=mDiv(d, {gap:12}, 'dButtons',null,['d-flex','justify-content-center']);
-	mButton('reset',send_reset,d1);
-	mButton('pause',send_pause,d1);
-	mButton('resume',send_resume,d1);
-
+	let dp=mDiv(d,{margin:10, padding:20},null,null,'card')
+	dgreen = get_progressbar(dp, 'green', '+').bar;
+	mLinebreak(dp,10);
+	dred = get_progressbar(dp, 'red', '-').bar;
+	mLinebreak(dp,30);
+	let d1=mDiv(dp, {gap:12}, 'dButtons',null,['d-flex','justify-content-center']);
+	mButton('reset',send_reset,d1,{},'button');
+	mButton('pause',send_pause,d1,{},'button');
+	mButton('resume',send_resume,d1,{},'button');
+	mLinebreak(dp,30);
+	
 }
 function onclick_plus_minus(color) { socket.emit('plus', color); }
 

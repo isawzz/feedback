@@ -28,6 +28,71 @@
   height: 100%;
 }
 
-
+.card{
+	box-shadow: 0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 20%), 0 1px 5px 0 rgb(0 0 0 / 12%);
+}
 /* #endregion progressbar */
 
+
+button {
+	text-align: center;
+	border: 1px solid grey;
+	border-radius: 4px;
+	font-size: 1rem;
+	line-height: 1.5;
+	outline: none;
+	box-shadow: none;
+}
+.button{
+	min-width: 100px;
+	font-size: 20px;
+	padding: 2px 8px 3px 8px;
+	margin-top: 12px;
+}
+button:hover{
+	cursor: pointer;
+	filter: brightness(0.8);
+}
+.coinput{
+	pointer-events: auto;
+	box-sizing: border-box;
+	font: inherit;
+	margin: 0;
+	font-family: inherit;
+	width: 96%;
+	background-image: none;
+	display: block;
+	margin-top: 4px;
+	font-size: 16px;
+	line-height: 1.5;
+	border-radius: 0;
+	background-color: transparent;
+	color: rgba(0,0,0,0.87);
+	box-shadow: none;
+	padding: 8px 0 4px;
+	border: 0;
+	border-bottom: 1px solid rgba(0,0,0,0.42);
+	transition: border-bottom 0.2s, padding-bottom 0.2s;
+	height: initial;
+	margin-bottom: 8px;
+	text-align: left;
+}
+.coinput:hover{
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	border-bottom: 2px solid rgba(0,0,0,.87);
+	padding-bottom: 3px;
+	text-align: left;	
+}
+.coinput:active, .coinput:focus{
+	border-color: #66afe9;
+	outline: 0;
+	height: initial;
+	border-bottom: 2px solid #66afe9;
+	padding-bottom: 3px;
+}
+.coform{
+	width: 96%;
+	min-height: 200px;
+	padding-bottom: 10px;
+}

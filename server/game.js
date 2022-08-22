@@ -47,11 +47,6 @@ function event_strength(color) {
 
 	return Math.min(Math.max(0., raw), 1.);
 }
-function old_processEvent(color) {
-
-	let inc = color == 'green' ? INCGREEN : INCRED;
-	return inc;
-}
 function processEvent(color) {
 
 	console.log('color', color, 'E', E[color],);
