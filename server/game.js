@@ -1,41 +1,59 @@
-const { WINIT, INCGREEN, INCRED, VINIT, VINCGREEN, VINCRED } = require('./constants');
+const F = 5;
+const INTERVAL = 1000 / F;
+const W_INIT = 50;
+const PLUS = 10; //inc w at plus 
+const MINUS = 5;
+const DECAY = 2 / F; //-0.0005;
 
-module.exports = {
-	createGameState,
-	gameLoop,
-	processEvent,
-}
+const V_INIT = 1;
+const V_MIN = 0.25;
+const V_DECAY = .05 / F;
+const E = { green: null, red: null };
 
-const E = { green: null, red: null, last_time: null };
-function createGameState() { return { green: { width: WINIT, vel: VINIT }, red: { width: WINIT, vel: VINIT } }; }
+function create_gamestate() { return { green: { width: W_INIT, vel: V_INIT }, red: { width: W_INIT, vel: V_INIT } }; }
 
-
-function gameLoop(state) {
+function gameloop(state) {
 	if (!state) { return; }
-
-	const green = state.green;
-	const red = state.red;
-
-	green.width = bounded(green.width, green.vel, 0, 100);
-	red.width = bounded(red.width, red.vel, 0, 100);
-
-	//friction: velocity automatically reduced by .1 every tick
-	//green.vel = bounded(green.vel, VINCGREEN, -1, 1);
-	//red.vel = bounded(red.vel, VINCRED, -1, 1);
-
-	//check ob irgendwelche clicks waren: wie mach ich das?????????
-
-	return false; // (green.width === red.width); //end condition! (for now)
-
+	for (const k of ['green', 'red']) if (state[k].width > 0) calc_decay(state[k]);
+	return false;
 }
 
+//constant decay
+//function calc_decay(st) { st.width -= DECAY; }
+
+//decay soll solange nicht geclickt wird immer langsamer werden
+function calc_decay(st) {
+	st.width -= DECAY * st.vel;
+	if (st.vel > V_MIN) st.vel -= V_DECAY; //else console.log('vel min!', st.vel);
+}
+function calc_event(state, color) {
+	record(state, color);
+	state[color].width += color == 'green' ? PLUS : MINUS;
+}
+
+function record(state, color) {
+	if (!E[color]) E[color] = {};
+	let e = E[color];
+	e.tlast = get_now();
+
+	state[color].vel = V_INIT;
+}
+
+
+
+
+
+
+
+
+//calculations fe?
 function event_strength(color) {
 
 	let e = E[color];
 	let t = get_now();
 	console.log('t', t, typeof t);
 
-	let diff = t - e.tlast; e.tlast = t
+	let diff = t - e.tlast; e.tlast = t;
 	secs = diff / 1000;
 
 	let T = 10; //horizon
@@ -47,14 +65,14 @@ function event_strength(color) {
 
 	return Math.min(Math.max(0., raw), 1.);
 }
-function processEvent(color) {
+function _calc_event_increment(color) {
 
 	console.log('color', color, 'E', E[color],);
 	let e = E[color];
 	if (e) e.strength = event_strength(color);
 	else e = E[color] = { strength: 1, tlast: get_now() };
 
-	let inc = color == 'green' ? INCGREEN : INCRED;
+	let inc = color == 'green' ? PLUS : MINUS;
 
 	let current = e.strength;
 	let step = 0.6; //stepsize
@@ -74,4 +92,5 @@ function get_now() { return Date.now(); }
 
 
 
+module.exports = { create_gamestate, gameloop, calc_event, INTERVAL }
 
