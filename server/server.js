@@ -17,64 +17,69 @@ const io = require('socket.io')(server, {
 });
 
 //#endregion
-const { createGameState, gameLoop, getWidthIncrement } = require('./game');
+const { createGameState, gameLoop, processEvent } = require('./game');
 const { FRAMERATE, WINIT } = require('./constants');
 var state = null;
+var game_running = null;
 
 //stage 1
 io.on('connection', client => {
-	if (!state) state = createGameState();
+	handleConnection(client);
 
-	client.on('plus',handlePlus);
+	client.on('pause', handlePause);
+	client.on('resume', handleResume);
+	client.on('reset', handleReset);
+	client.on('plus', handleButton);
 
-	function handlePlus(x) {
-		console.log('plus from:', client.id, x);
-		io.emit('plus','hallo');
-
-		const w = getWidthIncrement(x);
-		if (w) {
-			state[x].width += w;
-		}
-	}
-
-	startGameInterval(client, state);
 });
+function handleConnection(client) {
+	console.log('...connected:', client.id);
+	client.emit('message', { msg: `welcome to the feedback server` });
 
-function startGameInterval(client, state){
+	if (!state) state = createGameState();
+	if (!game_running) startGameInterval(state);
+}
+function handlePause() {
+	console.log('pause');
+	clearInterval(game_running);
+	io.emit('message', { mgs: 'feedback server paused' });
+}
+function handleResume() {
+	console.log('resume');
+	startGameInterval(state);
+	io.emit('message', { mgs: 'feedback server running' });
+}
+function handleReset() {
+	console.log('reset');
+	state = createGameState();
+	io.emit('message', { mgs: 'feedback server reset' });
+}
+function handleButton(x) {
+	io.emit('message', { msg: x == 'green' ? 'plus' : 'minus' });
+
+	state[x].width += processEvent(x);
+}
+
+function startGameInterval(state) {
+	if (game_running) return;
+	game_running = true;
 	const intervalId = setInterval(() => {
 
 		let end = gameLoop(state);
 		//console.log('end:', end);
-		if (!end){
-			client.emit('gameState', JSON.stringify(state));
-		}else{
-			client.emit('gameOver');
-			clearInterval(intervalId)
+		if (!end) {
+			io.emit('gamestate', JSON.stringify(state));
+		} else {
+			io.emit('gameover');
+			clearInterval(intervalId);
 		}
 		state.red.width += state.red.vel;
 		state.green.width += state.green.vel;
-		
-	} , 1000 / FRAMERATE);
+
+	}, 1000 / FRAMERATE);
 }
 
 
-//#region for later!
-function handleConnection(client) {
-	console.log('...connected:', client.id);
-	io.emit('fromServer', { msg: `user ${client.id} joined` });
-}
-function handleDisconnect(client) {
-	console.log('user disconnected:', client.id);
-	io.emit('fromServer', { msg: `user ${client.id} left` });
-}
-function handleFromClient(client, x) {
-	console.log('from client:', client.id, x.msg);
-}
-function handlePing(client, x) {
-	console.log('ping from:', client.id);
-	client.emit('ping');
-}
-//#endregion
 
 let port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`listening on ${port}`));

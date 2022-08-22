@@ -2,11 +2,11 @@ onload = start;
 var socket, greenbar, redbar, game_running, lastgreen=0, lastred=0, granularity, num_calls = 0, num_painted = 0;
 
 function start() {
-	//socket = io('http://localhost:3000');
-	socket = io('https://feedbackserver.herokuapp.com/');
+	socket = io('http://localhost:3000');
+	//socket = io('https://feedbackserver.herokuapp.com/');
 
-	socket.on('init', handleInit);
-	socket.on('gameState', handleGameState);
+	socket.on('message', handleMessage);
+	socket.on('gamestate', handleGameState);
 
 	dTable = document.getElementById('dTable');
 	game_running = false;
@@ -53,16 +53,16 @@ function paintGame(state) {
 
 }
 
-function handleInit(x) {
-	console.log('init', x);
+function handleMessage(x) {
+	console.log('from server:', x.msg);
 	//Clientdata.id = x;
 }
-function handleGameState(gameState) {
+function handleGameState(gamestate) {
 	if (!game_running) {
 		return;
 	}
-	gameState = JSON.parse(gameState); //from server is sent as string
-	requestAnimationFrame(() => paintGame(gameState));
+	gamestate = JSON.parse(gamestate); //from server is sent as string
+	requestAnimationFrame(() => paintGame(gamestate));
 }
 
 

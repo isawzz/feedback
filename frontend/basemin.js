@@ -1,3 +1,5 @@
+
+
 //#region globals: Session data
 var SOCKETSERVER = 'http://localhost:5000'; //geht im spital
 var SERVER = "http://localhost:8080/aroot/simple"; // oder telecave!
@@ -4347,5 +4349,6 @@ function simpleCompare(o1, o2) {
 	let s2 = object2string(o2);
 	return s1 == s2;
 }
-
+function get_now() { return Date.now(); }
+function get_timestamp() { return Date.now(); }
 
