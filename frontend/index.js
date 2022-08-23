@@ -104,9 +104,9 @@ function show_settings() {
 	let dp1 = mDiv(dp, { align: 'center' })
 	let [dleft, dright] = mColFlex(dp1, [1, 1]); //,['blue','red']);	
 
-	let lleft = 'w_init decay plus minus';
+	let lleft = 'pos_init decay plus minus';
 	let lright = 'v_init v_decay v_min interval';
-	let lines = 'exp_decay exp_green exp_red';
+	//let lines = 'exp_decay exp_green exp_red';
 	let d = dleft;
 	for (const k of toWords(lleft)) {
 		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
