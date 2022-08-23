@@ -42,6 +42,10 @@ function onclick_settings_test() {
 
 function paint_game(state) {
 	let [wgreen, wred] = [state.green.pos, state.red.pos];
+
+	// if (isdef(TO.animgreen)) TO.animgreen.can
+	// TO.animgreen = mAnimateTo(dgreen,'width',wgreen);
+
 	dgreen.style.width = wgreen + '%';
 	dred.style.width = wred + '%';
 
@@ -97,31 +101,39 @@ function show_game_screen(host = true) {
 
 function show_settings() {
 
-	if (nundef(settings)) { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)", }; }
+	//TESTING!!!!!
+	if (nundef(settings) && TESTING && TESTING != 'fe') { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)" }; }
+	if (nundef(settings) && TESTING && TESTING == 'fe') { settings = { POS_INIT: 0,HORIZON: 10, DECAY: 2, INTERVAL: 200,FR: 5, STEPSIZE: .6,SCALE: 1 }; }
 
 	let dp = mBy('dSettings') ?? mDiv(dTable, { box: true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
 	mClear(dp);
 	let dp1 = mDiv(dp, { align: 'center' })
 	let [dleft, dright] = mColFlex(dp1, [1, 1]); //,['blue','red']);	
 
-	let lleft = 'pos_init decay plus minus';
-	let lright = 'v_init v_decay v_min interval';
+	let lleft = 'pos_init decay plus minus horizon';
+	let lright = 'v_init v_decay v_min interval stepsize scale';
 	//let lines = 'exp_decay exp_green exp_red';
 	let d = dleft;
 	for (const k of toWords(lleft)) {
+		let key = k.toUpperCase(); 
+		let val = settings[key];
+		console.log('key',key,val)
+		if (nundef(val)) continue;
 		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
 		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
-		let key = k.toUpperCase();
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
-		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
+		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);
 	}
 	d = dright;
 	for (const k of toWords(lright)) {
+		let key = k.toUpperCase(); 
+		let val = settings[key];
+		if (nundef(val)) continue;
 		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
 		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
-		let key = k.toUpperCase();
+		console.log('key',key,val)
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
-		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
+		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);
 	}
 
 	mLinebreak(dp, 10);

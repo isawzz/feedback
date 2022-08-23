@@ -1,7 +1,7 @@
 onload = start;
 function start() {
 
-	//TESTING = true;
+	//TESTING = 'fe';
 
 	if (TESTING) {
 		mClass('dTesting', 'd-flex');
