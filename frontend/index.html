@@ -19,14 +19,17 @@
 		<div id="dTesting" class="d-none p-2">
 			<div class="d-flex">
 				<button onclick="onclick_test()">Test</button>
-				<button onclick="onclick_test()">Test</button>
+				<button onclick="onclick_settings_test()">Settings</button>
 				<button onclick="onclick_test()">Test</button>
 			</div>
 		</div>
 		<div id="dAdmin" style="height: 45px; font-size: 18pt" class="w-100 p-2 d-flex align-items-center justify-content-between">
 			<div id="dAdminLeft">Cosensus</div>
 			<div id="dAdminMiddle"></div>
-			<div id="dAdminRight"><i class="fa fa-cog" aria-hidden="true" id="bOpenSettings"></i></div>
+			<div id="dAdminRight">
+				<i id='dExitButton' class="fa fa-reply text-muted bi" onclick="show_intro_screen()"></i>
+				<i id='dSettingsButton' style="opacity:0" class="fa fa-cog text-muted bi" onclick="show_settings()"></i>
+			</div>
 		</div>
 		<div id="dHeader" class="h-40 d-none">
 			<div class="d-flex flex-column align-items-center justify-content-center h-100">
@@ -38,7 +41,9 @@
 			</div>
 		</div>
 		<div id="dTable" class="w-100 m-0 p-2 d-none"></div>
-		<div id="dSettings" class="w-100 m-0 p-2 d-none"></div>
+		<button id="dummy" class="dummy">dummy</button>
+
+		<!-- <div id="dSettings" class="w-100 m-0 p-2 d-none"></div> -->
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 		<script src="./start.js"></script>

@@ -49,9 +49,10 @@ button {
 	padding: 1px 8px 3px 8px;
 	margin-top: 12px;
 }
-button:hover{
+button:hover, .bi:hover{
 	cursor: pointer;
-	filter: brightness(0.8);
+	/* filter: hue-rotate(90deg);  */
+	filter: brightness(0.75);
 }
 .coinput{
 	pointer-events: auto;
@@ -96,3 +97,29 @@ button:hover{
 	min-height: 200px;
 	padding-bottom: 10px;
 }
+.dummy,.dummy:focus, .dummy:active, .dummy:hover {
+	width: 0px;
+	height: 1px;
+	display: inline;
+	padding: 0;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: transparent;
+}
+
+/* :focus:not(:focus-visible) {
+  outline: 0;
+  box-shadow: none;
+} */
+
+
+
+
+
+
+
+
+
+

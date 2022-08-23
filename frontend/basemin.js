@@ -360,7 +360,7 @@ function mAnimateTo(elem, prop, val, callback, msDuration = 1000, easing = 'cubi
 }
 function mAnimateList(elem, ogoal, callback, msDuration = 1000, easing = 'cubic-bezier(1,-0.03,.86,.68)', delay = 0) {
 	//usage: mAnimateTo(elem, 'opacity', 1, somefunc, 2000, 'ease-in', 1000);
-	for(const k in ogoal) {
+	for (const k in ogoal) {
 		ogoal[k] = isString(ogoal[k]) || k == 'opacity' ? ogoal[k] : '' + ogoal[k] + 'px';
 	}
 	let kflist = [ogoal];
@@ -549,6 +549,155 @@ function mDroppable(item, handler, dragoverhandler) {
 	//if (isdef(dragEnterHandler)) d.ondragenter = dragEnterHandler;
 	d.ondrop = handler;
 }
+//#region CLEANUP! edit inputs
+function unfocusOnEnter(ev) { if (ev.key === 'Enter') { ev.preventDefault(); mBy('dummy').focus(); } }
+function selectText(el) {
+	var sel, range;
+	if (window.getSelection && document.createRange) { //Browser compatibility
+		sel = window.getSelection();
+		if (sel.toString() == '') { //no text selection
+			window.setTimeout(function () {
+				range = document.createRange(); //range object
+				range.selectNodeContents(el); //sets Range
+				sel.removeAllRanges(); //remove all ranges from selection
+				sel.addRange(range);//add Range to a Selection.
+			}, 1);
+		}
+	} else if (document.selection) { //older ie
+		sel = document.selection.createRange();
+		if (sel.text == '') { //no text selection
+			range = document.body.createTextRange();//Creates TextRange object
+			range.moveToElementText(el);//sets Range
+			range.select(); //make selection.
+		}
+	}
+}
+function incInput(inp, n = 1) {
+	let val = Number(inp.innerHTML);
+	val += n;
+	inp.innerHTML = val;
+}
+function mEditRange(label, value, min, max, step, dParent, handler, styles, classes, id, triggerOnChange = true) {
+	let d = mDiv(dParent, styles);
+	let hpad = valf(styles.hpadding, 4);
+	let dLabel = mDiv(d, { w: '30%', align: 'right', hpadding: hpad, display: 'inline-block' }, null, label); //mCreateFrom(`<label>${label}</label>`);
+	let inpText = mCreateFrom(`<input type='number'  step=${step} min="${min}" max="${max}" value="${value}" ></input>`);
+	let inp = mCreateFrom(`<input type="range" step=${step} min="${min}" max="${max}" value="${value}" ></input>`);
+	// let inp = mCreateFrom(`<div contenteditable="true" spellcheck="false">${value}</div>	`)
+	mAppend(d, inpText);
+	mAppend(d, inp);
+	// let button = mButton('+', triggerOnChange ? ev => { incInput(inp); handler(inp.innerHTML, ev); } : ev => { incInput(inp); }, d);
+	mStyle(inpText, { display: 'inline', w: '20%', align: 'left', hpadding: hpad });
+	mStyle(inp, { display: 'inline', w: '40%', hpadding: hpad });
+
+	inpText.onchange = (ev) => { inp.value = inpText.value; handler(inpText.value, ev); };
+	// inpText.addEventListener('keydown', unfocusOnEnter);
+	// inpText.addEventListener('focusout', ev => { inp.value = inpText.value;handler(inp.innerHTML, ev); });
+	inpText.onclick = ev => selectText(ev.target);
+	inp.onchange = (ev) => { inpText.value = inp.value; handler(inpText.value, ev); };
+	if (isdef(classes)) mClass(inp, classes);
+	if (isdef(id)) inp.id = id;
+	return inpText;
+}
+function mEditNumber(label, value, dParent, handler, styles, classes, id, triggerOnChange = false) {
+	let d = mDiv(dParent, styles);
+	let hpad = valf(styles.hpadding, 4);
+	let dLabel = mDiv(d, { w: '50%', align: 'right', hpadding: hpad, display: 'inline-block' }, null, label); //mCreateFrom(`<label>${label}</label>`);
+
+	if (nundef(handler)) handler = x => console.log(x);
+
+	let inp = mCreateFrom(`<div contenteditable="true" spellcheck="false">${value}</div>	`)
+	mAppend(d, inp);
+	//let button = mButton('+', triggerOnChange ? ev => { incInput(inp); handler(inp.innerHTML, ev); } : ev => { incInput(inp); }, d);
+	mStyle(inp, { display: 'inline-block', w: '40%', align: 'left', hpadding: hpad });
+	inp.addEventListener('keydown', unfocusOnEnter);
+	inp.addEventListener('focusout', ev => { handler(inp.innerHTML, ev); });
+	inp.onclick = ev => selectText(ev.target);
+
+	if (isdef(classes)) mClass(inp, classes);
+	if (isdef(id)) inp.id = id;
+	return inp;
+}
+function mEdit(label, value, dParent, handler, styles, classes, id) {
+
+	let d = mDiv(dParent, styles);
+	let hpad = valf(styles.hpadding, 4);
+	let dLabel = mDiv(d, { w: '50%', align: 'right', hpadding: hpad, display: 'inline-block' }, null, label); //mCreateFrom(`<label>${label}</label>`);
+
+	let inp = mCreateFrom(`<div contenteditable="true" spellcheck="false">${value}</div>	`)
+	mAppend(d, inp);
+	mStyle(inp, { display: 'inline-block', w: '50%', align: 'left', hpadding: hpad });
+	inp.addEventListener('keydown', unfocusOnEnter);
+	inp.addEventListener('focusout', ev => { handler(inp.innerHTML, ev); });
+	inp.onclick = ev => selectText(ev.target);
+
+	if (isdef(classes)) mClass(inp, classes);
+	if (isdef(id)) inp.id = id;
+	return inp;
+}
+function mEditX(label, val, dParent, styles, classes, handler, id, opt = {}) {
+	let defOptions = {
+		alignLabel: 'right',
+		fgLabel: 'silver',
+		wminLabel: 120,
+		alignInput: 'left',
+		fgInput: 'white',
+		wminInput: 50,
+		wminRight: 120,
+		align: 'center',
+
+	}
+	addKeys(defOptions, opt);
+	let wminTotal = wminLabel + wminRight;
+	if (nundef(styles)) styles = {};
+	if (nundef(styles.wmin)) styles.wmin = 0;
+	styles.wmin = Math.max(styles.wmin, wminTotal);
+	styles.align = opt.align;
+	let dOuter = mDiv(dParent, styles, id, null, classes);
+	let dLabel = mDiv(dOuter, { fg: opt.fgLabel, wmin: opt.wminLabel, align: opt.alignLabel }, null, label);
+	let dInput = mDiv(dOuter, { contenteditable: true, spellcheck: false, fg: opt.fgInput, wmin: opt.wminInput, align: opt.alignInput }, null, val);
+	dInput.onfocusout = ev => handler(dInput.innerHTML, ev);
+	dInput.onkeydown = (ev) => {
+		if (ev.key === 'Enter') {
+			ev.preventDefault();
+			mBy('dummy').focus();
+		}
+	}
+	return dInput;
+}
+function mEditableOnEdited(id, dParent, label, initialVal, onEdited, onOpening, styles, classes) {
+	let inp = mEditableInput(dParent, label, initialVal, styles, classes);
+	inp.id = id;
+	if (isdef(onOpening)) { inp.addEventListener('focus', ev => onOpening(ev)); }
+	inp.addEventListener('focusout', ev => {
+		window.getSelection().removeAllRanges();
+		if (isdef(onEdited)) onEdited(inp.innerHTML, ev);
+	});
+	return inp;
+}
+function mEditableInput(dParent, label, val, styles, classes, id) {
+	let labelElem = mCreateFrom(`<span>${label}</span>	`)
+	let elem = mCreateFrom(`<span contenteditable="true" spellcheck="false">${val}</span>	`)
+	elem.addEventListener('keydown', (ev) => {
+		if (ev.key === 'Enter') {
+			ev.preventDefault();
+			mBy('dummy').focus();
+			//if (isdef(handler)) handler(elem.innerHTML, ev); //das ist schon bei mEditableInputOnEdited!!!
+		}
+	});
+	let dui = mDiv(dParent, { margin: 2 });
+	mAppend(dui, labelElem);
+	mAppend(dui, elem);
+	if (isdef(styles)) {
+		if (isdef(styles.wInput)) mStyle(elem, { wmin: styles.wInput });
+		mStyle(elem, styles);
+	}
+	if (isdef(classes)) mStyle(elem, classes);
+	if (isdef(id)) elem.id = id;
+
+	return elem;
+}
+//#endregion
 function mFlexEvenly(d) {
 	let styles = { display: 'flex' };
 	styles['justify-content'] = 'space-evenly';
@@ -814,7 +963,7 @@ function mRadioGroup(dParent, styles, id, legend, legendstyles) {
 		let l = mCreate('legend');
 		l.innerHTML = legend;
 		mAppend(f, l);
-		if (isdef(legendstyles)) {mStyle(l, legendstyles);}
+		if (isdef(legendstyles)) { mStyle(l, legendstyles); }
 	}
 	mAppend(dParent, f);
 	return f;
@@ -1298,7 +1447,7 @@ function mFade(d, ms = 800, callback = null, easing = 'ease') { return mAnimateT
 function mFadeRemove(d, ms = 800, callback = null) { return mAnimateTo(d, 'opacity', 0, () => { mRemove(d); if (callback) callback(); }, ms); }
 function mFadeClear(d, ms = 800, callback = null) { return mAnimateTo(d, 'opacity', 0, () => { mClear(d); if (callback) callback(); }, ms); }
 function mFadeClearShow(d, ms = 800, callback = null) { return mAnimate(d, 'opacity', [1, 0], () => { mClear(d); if (callback) callback(); }, ms); }
-function mFall(d, ms = 800, dist=50) { toElem(d).animate([{ opacity: 0, transform: `translateY(-${dist}px)` }, { opacity: 1, transform: 'translateY(0px)' },], { fill: 'both', duration: ms, easing: 'ease' }); }
+function mFall(d, ms = 800, dist = 50) { toElem(d).animate([{ opacity: 0, transform: `translateY(-${dist}px)` }, { opacity: 1, transform: 'translateY(0px)' },], { fill: 'both', duration: ms, easing: 'ease' }); }
 function mPulse(d, ms, callback = null) { mClass(d, 'onPulse'); TO[getUID()] = setTimeout(() => { mClassRemove(d, 'onPulse'); if (callback) callback(); }, ms); }
 function mPulse1(d, callback) { mPulse(d, 1000, callback); }
 function mPulse2(d, callback) { mPulse(d, 2000, callback); }
@@ -1324,12 +1473,12 @@ function mTranslate(child, newParent, ms = 800, callback = null) {
 	//let anim = toElem(child).animate([{ transform: `scale(${1},${1})` }, { transform: `scale(${x},${y})` },], { fill: 'both', duration: ms, easing: 'ease' });
 	//anim.onfinish = callback;
 }
-function mTranslateBy(elem,x,y, ms = 800, callback = null) {
+function mTranslateBy(elem, x, y, ms = 800, callback = null) {
 	mAnimate(elem, 'transform', [`translateX(${x}px) translateY(${y}px)`], callback, ms, 'ease'); //translate(${dx}px,${dy}px)`
 	//let anim = toElem(child).animate([{ transform: `scale(${1},${1})` }, { transform: `scale(${x},${y})` },], { fill: 'both', duration: ms, easing: 'ease' });
 	//anim.onfinish = callback;
 }
-function mTranslateByFade(elem,x,y, ms = 800, callback = null) {
+function mTranslateByFade(elem, x, y, ms = 800, callback = null) {
 
 	mAnimate(elem, 'transform', [`translateX(${x}px) translateY(${y}px)`], callback, ms, 'ease'); //translate(${dx}px,${dy}px)`
 	let a = toElem(elem).animate([{ opacity: .25 }, { opacity: 1 },], { fill: 'both', duration: ms, easing: 'ease' });
@@ -1588,7 +1737,7 @@ function arrBuckets(arr, func, sortbystr) {
 }
 function arrClear(arr) { arr.length = 0; }
 function arrChildren(elem) { return [...toElem(elem).children]; }
-function arrCount(arr,func){ return arr.filter(func).length; }
+function arrCount(arr, func) { return arr.filter(func).length; }
 function arrCycle(arr, count) { return arrRotate(arr, count); }
 function arrExtend(arr, list) { list.map(x => arr.push(x)); return arr; }
 function arrFirst(arr) { return arr.length > 0 ? arr[0] : null; }
@@ -4298,9 +4447,9 @@ function exchange_by_index(arr1, i1, arr2, i2) {
 	arr2[i2] = temp;
 }
 function if_plural(n) { return n == 1 ? '' : 's'; }
-function if_stringified_or_list(obj) { return nundef(obj)?[]: is_stringified(obj) ? JSON.parse(obj) : obj; }
-function if_stringified_or_dict(obj) { return nundef(obj)?{}: is_stringified(obj) ? JSON.parse(obj) : obj; }
-function if_stringified_or_string(obj) { return nundef(obj)?'': is_stringified(obj) ? JSON.parse(obj) : obj; }
+function if_stringified_or_list(obj) { return nundef(obj) ? [] : is_stringified(obj) ? JSON.parse(obj) : obj; }
+function if_stringified_or_dict(obj) { return nundef(obj) ? {} : is_stringified(obj) ? JSON.parse(obj) : obj; }
+function if_stringified_or_string(obj) { return nundef(obj) ? '' : is_stringified(obj) ? JSON.parse(obj) : obj; }
 function if_stringified(obj) { return is_stringified(obj) ? JSON.parse(obj) : obj; }
 function is_stringified(obj) {
 	if (isString(obj)) {

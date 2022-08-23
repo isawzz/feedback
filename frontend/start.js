@@ -11,11 +11,13 @@ function start() {
 	}
 	socket.on('message', handle_message);
 	socket.on('gamestate', handle_gamestate);
+	socket.on('settings', handle_settings);
 
 	dTable = document.getElementById('dTable');
 	in_game_screen = false;
 
-	screen_transition('dHeader');
+	if (TESTING) { show_game_screen(true); show_settings(); }
+	else screen_transition('dHeader');
 }
 
 

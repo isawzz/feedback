@@ -17,7 +17,7 @@ const io = require('socket.io')(server, {
 });
 
 //#endregion
-const { create_gamestate, gameloop, calc_event, INTERVAL } = require('./game');
+const { create_gamestate, gameloop, calc_event, update_settings, Settings, Defaults } = require('./game');
 
 var state = null;
 var game_running = false, intervalId = null;
@@ -30,11 +30,17 @@ io.on('connection', client => {
 	client.on('resume', handleResume);
 	client.on('reset', handleReset);
 	client.on('plus', handleButton);
+	client.on('settings',handleSettings);
 
 });
+function handleButton(x) {
+	io.emit('message', { msg: x == 'green' ? 'plus' : 'minus' });
+
+	calc_event(state,x);
+}
 function handleConnection(client) {
 	console.log('...connected:', client.id);
-	client.emit('message', { msg: `welcome to the feedback server` });
+	client.emit('settings', { settings: Settings, defaults: Defaults, msg: `welcome to the feedback server` });
 
 	if (!state) state = create_gamestate();
 	startGameInterval(state);
@@ -44,11 +50,6 @@ function handlePause() {
 	clearInterval(intervalId); game_running = false;
 	io.emit('message', { msg: 'feedback server paused' });
 }
-function handleResume() {
-	console.log('resume');
-	startGameInterval(state);
-	io.emit('message', { msg: 'feedback server running' });
-}
 function handleReset() {
 	console.log('reset');
 	clearInterval(intervalId); game_running = false;
@@ -56,10 +57,17 @@ function handleReset() {
 	startGameInterval(state);
 	io.emit('message', { msg: 'feedback server reset' });
 }
-function handleButton(x) {
-	io.emit('message', { msg: x == 'green' ? 'plus' : 'minus' });
-
-	calc_event(state,x);
+function handleResume() {
+	console.log('resume');
+	startGameInterval(state);
+	io.emit('message', { msg: 'feedback server running' });
+}
+function handleSettings(x){
+	console.log('client sent',x);
+	let s=JSON.parse(x);
+	console.log(s);
+	update_settings(s);
+	handleReset();
 }
 
 function startGameInterval(state) {
@@ -77,7 +85,7 @@ function startGameInterval(state) {
 
 		}
 
-	}, INTERVAL);
+	}, Settings.INTERVAL);
 }
 
 
