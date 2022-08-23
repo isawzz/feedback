@@ -144,16 +144,16 @@ function show_settings() {
 		let di = mDiv(d, {w:300}, null, null, ['coinput', 'd-flex']);
 		let label = (k.includes('decay')? k+'/s':k=='interval'?k+' in ms':k) + ':';
 		let key = k.toUpperCase();
-		let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
-		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);
+		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
+		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
 	}
 	d=dright;
 	for(const k of toWords(lright)){
 		let di = mDiv(d, {w:300}, null, null, ['coinput', 'd-flex']);
 		let label = (k.includes('decay')? k+'/s':k=='interval'?k+' in ms':k) + ':';
 		let key = k.toUpperCase();
-		let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
-		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);
+		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
+		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
 	}
 
 	mLinebreak(dp,10);
