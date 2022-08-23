@@ -1,5 +1,6 @@
 var is_host, socket, settings, defaults, greenbar, redbar, in_game_screen, lastgreen = 0, lastred = 0, granularity, num_calls = 0, num_painted = 0;
 
+
 function get_progressbar(dParent, color, sym) {
 	//color has to be a word (web color)
 	let id = getUID();
@@ -61,7 +62,7 @@ function show_intro_screen() {
 	if (!in_game_screen) return;
 	in_game_screen = false;
 	screen_transition('dHeader', 'dTable');
-	mBy('dSettingsButton').style.opacity = 0;
+	mBy('dSettingsButton').style.opacity = 0; 
 
 }
 function show_game_screen(host = true) {
@@ -92,57 +93,117 @@ function show_game_screen(host = true) {
 	mButton('pause', send_pause, d1, {}, 'button');
 	mButton('resume', send_resume, d1, {}, 'button');
 	mLinebreak(dp, 20);
-	mBy('dSettingsButton').style.opacity = 1;
+	mBy('dSettingsButton').style.opacity = 1; 
 }
 
 function show_settings() {
 
-	if (nundef(settings)) { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, W_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)", }; }
+	if (nundef(settings)) {
+		settings = {
+			DECAY: 0.4,
+			FR: 5,
+			INTERVAL: 200,
+			MINUS: 5,
+			PLUS: 10,
+			V_DECAY: 0.01,
+			V_INIT: 1,
+			V_MIN: 0.25,
+			W_INIT: 50,
+			exp_decay: "x * Math.pow((1 - DECAY)",
+		};
+	}
 
-	let dp = mBy('dSettings') ?? mDiv(dTable, { box: true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
+
+	let dp = mBy('dSettings') ?? mDiv(dTable, {  box:true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
 	mClear(dp);
-	let dp1 = mDiv(dp, { align: 'center' })
+	//let d=mDiv(dp,{display:'grid','grid-template-columns':'1fr 1fr'}); //Grid(dp);
+	let dp1=mDiv(dp,{align:'center'})
 	let [dleft, dright] = mColFlex(dp1, [1, 1]); //,['blue','red']);	
+	//dleft.innerHTML = 'hallo';	dright.innerHTML = 'hallo';
 
-	let lleft = 'w_init decay plus minus';
-	let lright = 'v_init v_decay v_min interval';
-	let lines = 'exp_decay exp_green exp_red';
+	//let d1 = mDiv(dp, {}, null, null, 'row');
+	//let dleft = mDiv(dp, {w:100,h:100,bg:'blue'}, null, 'hallo', 'col');
+	//let dright = mDiv(dp, {w:100,h:100,bg:'red'}, null, 'geh', 'col');
+	let i = 0;
+	let n = get_keys(settings).length / 2;
+
+	let fr=1000/settings.INTERVAL;
+	let nsettings = jsCopy(settings);
+	for(const k in nsettings){
+		nsettings[k]*=fr;
+	}
+
+	console.log('n', n);
+
+	let lleft='w_init decay plus minus';
+	let lright='v_init v_decay v_min interval';
+	let lines='exp_decay exp_green exp_red';
+
 	let d = dleft;
-	for (const k of toWords(lleft)) {
-		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
-		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
+	for(const k of toWords(lleft)){
+		let di = mDiv(d, {w:300}, null, null, ['coinput', 'd-flex']);
+		let label = (k.includes('decay')? k+'/s':k=='interval'?k+' in ms':k) + ':';
 		let key = k.toUpperCase();
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
 		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
 	}
-	d = dright;
-	for (const k of toWords(lright)) {
-		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
-		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
+	d=dright;
+	for(const k of toWords(lright)){
+		let di = mDiv(d, {w:300}, null, null, ['coinput', 'd-flex']);
+		let label = (k.includes('decay')? k+'/s':k=='interval'?k+' in ms':k) + ':';
 		let key = k.toUpperCase();
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
 		let dn = mEditNumber(label, settings[key], di, null, { w: '100%' }, null, `i_${k}`);
 	}
 
-	mLinebreak(dp, 10);
+	mLinebreak(dp,10);
 	let d1 = mDiv(dp, { gap: 12 }, 'dButtons', null, ['d-flex', 'justify-content-center']);
 	mButton('update', update_settings, d1, {}, 'button');
 	mButton('defaults', reset_settings, d1, {}, 'button');
+
+	// d=dp;
+	// for(const k of toWords(lines)){
+	// 	let di = mDiv(d, {}, null, null, ['coinput', 'd-flex']);
+	// 	let dn = mEditNumber(k, settings[k], di, null, { w: '100%',fg:'white' }, null, `i_${k}`);
+	// 	break;
+	// }
+	//return;
+	// for (const k in settings) {
+	// 	let di = mDiv(d, {}, null, null, ['coinput', 'd-flex']);
+	// 	let dn = mEditNumber(k, settings[k], di, null, { w: '100%',fg:'white' }, null, `i_${k}`);
+	// 	i++;
+	// 	if (i > n) d = dright;
+
+	// 	//let dlabel = mDiv(di, { w: 100,align:'right' }, null, k);
+	// 	//let dval = mInput(di, {}, `i_${k}`, null, null, i++, settings[k]);
+
+	// }
+	return;
 }
-function reset_settings() {
-	for (const k in settings) { settings[k] = defaults[k]; }
+function reset_settings(){
+
+	for(const k in settings){settings[k] = defaults[k]; }
 	show_settings();
+
+
 }
-function update_settings() {
-	for (const k in settings) {
+function update_settings(){
+
+	let lleft='w_init decay plus minus';
+	let lright='v_init v_decay v_min interval';
+	let lines='exp_decay exp_green exp_red';
+	for(const k in settings){
 		let lower = k.toLowerCase();
 		let inp = mBy(`i_${lower}`);
 		if (isdef(inp)) {
 			let value = Number(inp.innerHTML);
-			if (isNumber(value)) settings[k] = value;
+			if (isNumber(value)) settings[k]=value;
+			
 		}
 	}
-	socket.emit('settings', JSON.stringify(settings));
+	socket.emit('settings',JSON.stringify(settings));
+
+
 }
 
 
