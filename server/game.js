@@ -1,90 +1,81 @@
-var FR_INIT = 5;
 const Defaults = {
-	FR: FR_INIT,
-	INTERVAL: 1000 / FR_INIT,
-	W_INIT: 50,
-	PLUS: 10, //inc w at plus 
+	FR: 5, // frames per second
+	INTERVAL: 200, // in ms
+	POS_INIT: 50, // initial progressbar position at reset, unit: %
+	PLUS: 10, //pos increment per click of plus 
 	MINUS: 5,
-	DECAY: 2, //dec per second
-	V_INIT: 1,
-	V_MIN: 0.25,
-	V_DECAY: .05,
+	DECAY: 2, //automatic decrement per second
+	V_INIT: 1, 
+	V_MIN: 0.25, 
+	V_DECAY: .05, //automatic decrement of decay per second
 };
 
 const Settings = {
-	FR: FR_INIT,
-	INTERVAL: 1000 / FR_INIT,
-	W_INIT: 50,
-	PLUS: 10, //inc w at plus 
+	FR: 5, // frames per second
+	INTERVAL: 200, // in ms
+	POS_INIT: 50, // initial progressbar position at reset, unit: %
+	PLUS: 10, //pos increment per click of plus 
 	MINUS: 5,
-	DECAY: 2, //dec per second
-	V_INIT: 1,
-	V_MIN: 0.25,
-	V_DECAY: .05,
-	exp_decay: 'x * Math.pow((1 - DECAY)'
+	DECAY: 2, //automatic decrement per second
+	V_INIT: 1, 
+	V_MIN: 0.25, 
+	V_DECAY: .05, //automatic decrement of decay per second
 };
 
-// const INTERVAL = 1000 / FR_INIT;
-// const W_INIT = 50;
-// const PLUS = 10; //inc w at plus 
-// const MINUS = 5;
-// const DECAY = 2 / FR_INIT; //-0.0005;
-// const V_INIT = 1;
-// const V_MIN = 0.25;
-// const V_DECAY = .05 / FR_INIT;
-const E = { green: null, red: null };
+//#region standard code
+const E = { green: null, red: null }; //for each button, last click is timestamped
 
-function create_gamestate() { return { green: { width: Settings.W_INIT, vel: Settings.V_INIT }, red: { width: Settings.W_INIT, vel: Settings.V_INIT } }; }
+function create_gamestate() { return { green: { pos: Settings.POS_INIT, v: Settings.V_INIT }, red: { pos: Settings.POS_INIT, v: Settings.V_INIT } }; }
 
 function gameloop(state) {
 	if (!state) { return; }
-	for (const k of ['green', 'red']) if (state[k].width > 0) calc_decay(state[k]);
+	for (const k of ['green', 'red']) if (state[k].pos > 0) calc_decay(state[k], (Settings.DECAY / Settings.FR), (Settings.V_DECAY / Settings.FR));
 	return false;
 }
-
-//constant decay
-//function calc_decay(st) { st.width -= (Settings.DECAY / Settings.FR); }
-
-//decay soll solange nicht geclickt wird immer langsamer werden
-function calc_decay(st) {
-	st.width -= (Settings.DECAY / Settings.FR) * st.vel;
-	if (st.vel > Settings.V_MIN) st.vel -= (Settings.V_DECAY / Settings.FR); //else console.log('vel min!', st.vel);
-}
-function calc_event(state, color) {
+function process_event(state, color) {
 	record(state, color);
-	state[color].width += color == 'green' ? Settings.PLUS : Settings.MINUS;
+	calc_event(state[color], color == 'green' ? Settings.PLUS : Settings.MINUS);
+	//if (state[color].pos > 100) state[color].pos = 100; //do it unten fuer verstaendlichkeit
 }
-
 function record(state, color) {
 	if (!E[color]) E[color] = {};
 	let e = E[color];
 	e.tlast = get_now();
-
-	state[color].vel = Settings.V_INIT;
+	console.log('event', color, e)
 }
-
-
 function update_settings(snew) {
-
 	let intnew = snew.INTERVAL;
-	if (intnew != Settings.INTERVAL) {
-		//interval = 1000 / fr
-		//fr = 1000 / int
-		Settings.FR = 1000 / intnew;
-	}
+	if (intnew != Settings.INTERVAL) { Settings.FR = 1000 / intnew; }
+	for (const k in snew) { if (k != 'FR') Settings[k] = snew[k]; }
+}
+function get_now() { return Date.now(); }
 
-	for (const k in snew) {
-		if (k != 'FR') Settings[k] = snew[k];
-	}
+//#endregion
 
-
+//#region *** update formulas for decay and click event ***
+//2. decay soll solange nicht geclickt wird immer langsamer werden
+function calc_decay(st, dps, vps) {
+	//st  ... state {pos, v}, one for each progress bar
+	//dps ... decrement of pos per second (DECAY / FR)
+	//vps ... decrement of velocity v per second (V_DECAY / FR)
+	st.pos -= dps * st.v;
+	if (st.v > Settings.V_MIN) st.v -= vps; //velocity bounded by V_MIN
+}
+function calc_event(st, inc) {
+	//st  ... state {pos, v}, one for each progress bar
+	//inc ... constant increment for each progressbar on click (Settings.PLUS or Settings.MINUS) 
+	st.pos += inc;
+	if (st.pos > 100) st.pos = 100; // upper bound 100%
+	st.v = Settings.V_INIT; //velocity of decay is reset to initial value
 }
 
-
-
-
-
+//#region unused code
 //calculations fe?
+function fe(st, e, dps, vps) {
+	let tnow = get_now();
+	let t = (tnow - e.last) / 1000; //secs past since last event
+
+}
 function event_strength(color) {
 
 	let e = E[color];
@@ -121,14 +112,16 @@ function _calc_event_increment(color) {
 	return mag * inc; // E[color].strength * inc;
 }
 
-function bounded(val, inc, min, max) {
-	if (val + inc < min) { return min; }
-	if (val + inc > max) { return max; }
-	return val + inc;
-}
-function get_now() { return Date.now(); }
+// previous versions for calculations
+//1. constant decay: does not use velocity!
+//function calc_decay(st, dps) { st.pos -= dps; }
+// function calc_event(st, inc) {
+// 	st.pos += inc; // inc is constant increment  (Settings.PLUS or Settings.MINUS) 
+// 	if (st.pos > 100) st.pos = 100; // upper bound 100%
+// }
+
+//#endregion
 
 
-
-module.exports = { create_gamestate, gameloop, calc_event, update_settings, Settings, Defaults }
+module.exports = { create_gamestate, gameloop, process_event, update_settings, Settings, Defaults }
 

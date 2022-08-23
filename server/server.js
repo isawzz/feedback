@@ -17,7 +17,7 @@ const io = require('socket.io')(server, {
 });
 
 //#endregion
-const { create_gamestate, gameloop, calc_event, update_settings, Settings, Defaults } = require('./game');
+const { create_gamestate, gameloop, process_event, update_settings, Settings, Defaults } = require('./game');
 
 var state = null;
 var game_running = false, intervalId = null;
@@ -36,7 +36,7 @@ io.on('connection', client => {
 function handleButton(x) {
 	io.emit('message', { msg: x == 'green' ? 'plus' : 'minus' });
 
-	calc_event(state,x);
+	process_event(state,x);
 }
 function handleConnection(client) {
 	console.log('...connected:', client.id);

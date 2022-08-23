@@ -41,7 +41,7 @@ function onclick_settings_test() {
 }
 
 function paint_game(state) {
-	let [wgreen, wred] = [state.green.width, state.red.width];
+	let [wgreen, wred] = [state.green.pos, state.red.pos];
 	dgreen.style.width = wgreen + '%';
 	dred.style.width = wred + '%';
 
@@ -97,7 +97,7 @@ function show_game_screen(host = true) {
 
 function show_settings() {
 
-	if (nundef(settings)) { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, W_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)", }; }
+	if (nundef(settings)) { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)", }; }
 
 	let dp = mBy('dSettings') ?? mDiv(dTable, { box: true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
 	mClear(dp);
