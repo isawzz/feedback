@@ -123,7 +123,7 @@ function show_game_screen(host = true) {
 		mLinebreak(dp, 20);
 		mBy('dSettingsButton').style.opacity = 1;
 	} else {
-		mButton('ping', send_ping, d1, {}, 'button');
+		//mButton('ping', send_ping, d1, {}, 'button');
 		send_ping();
 	}
 }
