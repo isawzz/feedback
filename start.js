@@ -1,14 +1,17 @@
 onload = start;
 function start() {
 
-	//TESTING = 'fe';
+	socket = io();
 
-	if (TESTING) {
-		mClass('dTesting', 'd-flex');
-		socket = io('http://localhost:3000');
-	} else {
-		socket = io('https://feedbackserver.herokuapp.com/');
-	}
+	// TESTING = 'ngrok';
+	// if (TESTING == 'ngrok'){
+	// 	socket = io('http://localhost:3333/');
+	// }else 	if (TESTING) {
+	// 	mClass('dTesting', 'd-flex');
+	// 	socket = io('http://localhost:3000');
+	// } else {
+	// 	socket = io('https://feedbackserver.herokuapp.com/');
+	// }
 	socket.on('message', handle_message);
 	socket.on('gamestate', handle_gamestate);
 	socket.on('settings', handle_settings);
