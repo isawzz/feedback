@@ -4,21 +4,30 @@
 1. install node js: https://nodejs.org/en/download/
 (falls du es nicht schon hast)
 
-2. clone github from https://github.com/isawzz/feedback
+2. download yarn from https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable 
 
-3. open in vs code 
+3. clone github from https://github.com/isawzz/feedback
 
-4. in vs code: goto dir wo server.js drin ist (v2)
+4. open in vs code
 
-5. npx nodemon server.js
+4. in vs code terminal:
+
+	yarn add express
+
+	yarn add socket.io
+
+5. in vs code: goto dir wo server.js drin ist (v2)
+
+6. npx nodemon server.js (or simply: node server.js)
 (starts server on localhost:3000)
+(kann auch sein dass du nodemon installieren musst)
 
-6. start windows powershell in dir where ngrok.exe is
+7. start windows powershell in dir where ngrok.exe is
 
-7. ./ngrok.exe http 3000
+8. ./ngrok.exe http 3000
 (starts ngrok)
 
-7. copy url that looks like:
+9. copy url that looks like:
 https://c2ee-2601-600-8500-18a0-399b-e410-67c4-2cc1.ngrok.io
 
-8. send it to other users, and paste into browser, this should connect everyone to your localhost:3000
+10. send it to other users, and paste into browser, this should connect everyone to your localhost:3000

@@ -1,5 +1,4 @@
-//#region require
-// const path = require('path');
+//#region boilerplate
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -11,29 +10,17 @@ app.use(express.static(__dirname + '/'));
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/index.html');
 });
-//new code (use old)
-// io.on('connection', (socket) => { console.log('a user connected'); });
-// server.listen(3000, () => { console.log('listening on *:3000'); });
-
-
-
-
-//old code
-// const cors = require('cors');
-
-// const io = require('socket.io')(server, {
-// 	cors: {
-// 		origins: '*',//['http://localhost:' + PORT]
-// 	}
-// });
 
 //#endregion
-const { create_gamestate, update_gamestate, process_event, update_settings, Settings, Defaults } = require('./game');
+
+// *** pick your version for functions here: ***
+var game_version = './game_fe'; // das ist die wo ich versuche deine formeln zu replicaten
+//var game_version = './game'; // das ist meine simple version
+const { create_gamestate, update_gamestate, process_event, update_settings, Settings, Defaults } = require(game_version);
 
 var state = null;
 var game_running = false, intervalId = null;
 
-//stage 1
 io.on('connection', client => {
 	handle_connection(client);
 
@@ -81,7 +68,6 @@ function handle_settings(x) {
 	update_settings(s);
 	handle_reset();
 }
-
 function startGameInterval(state) {
 	if (game_running) return;
 	game_running = true;
@@ -100,7 +86,5 @@ function startGameInterval(state) {
 	}, Settings.INTERVAL);
 }
 
-
-
-let port = process.env.PORT || 3000;
+let port = 3000;
 server.listen(port, () => console.log(`listening on ${port}`));

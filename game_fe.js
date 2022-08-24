@@ -31,7 +31,10 @@ function create_gamestate(){
 function update_gamestate(state) {
 	//hier wird current pos fuer green, red berechnet!
 	if (!state) { return; }
-	for (const k of ['green', 'red']) state[k].pos = 100 * get_reaction(k);
+	for (const k of ['green', 'red']) {
+		//state[k].pos = 100 * get_reaction(k); //testing
+		state[k].pos = Math.min(100 * get_reaction(k), 100); //zur sicherheit!
+	}
 	return false;
 }
 function process_event(state, color) {
