@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 //#endregion
 
 // *** pick your version for functions here: ***
-var game_version = './game_fe'; // das ist die wo ich versuche deine formeln zu replicaten
+var game_version = './game'; // das ist die wo ich versuche deine formeln zu replicaten
 //var game_version = './game'; // das ist meine simple version
 const { create_gamestate, update_gamestate, process_event, update_settings, Settings, Defaults } = require(game_version);
 

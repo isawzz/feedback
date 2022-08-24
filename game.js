@@ -17,9 +17,9 @@ const Settings = {
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	PLUS: 10, //pos increment per click of plus 
 	MINUS: 5,
-	DECAY: 2, //automatic decrement per second
+	DECAY: 4, //automatic decrement per second
 	V_INIT: 1,
-	V_MIN: 0.25,
+	V_MIN: 0.1,
 	V_DECAY: .05, //automatic decrement of decay per second
 };
 

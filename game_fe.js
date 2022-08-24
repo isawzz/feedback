@@ -5,7 +5,7 @@ const Defaults = {
 	INTERVAL: 200, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	HORIZON: 10, //secs to take into consideration
-	DECAY: 2., 
+	DECAY: 2.,
 	STEPSIZE: .6,
 	SCALE: 1,
 };
@@ -13,9 +13,9 @@ const Defaults = {
 const Settings = {
 	FR: 5, // frames per second
 	INTERVAL: 200, // in ms
-	POS_INIT: 50, // initial progressbar position at reset, unit: %
+	POS_INIT: 0, // macht hier keinen sinn != 0
 	HORIZON: 10, //secs to take into consideration
-	DECAY: 2., 
+	DECAY: 2.,
 	STEPSIZE: .6,
 	SCALE: 1,
 };
@@ -23,10 +23,10 @@ const Settings = {
 var activity = {};
 var events = [];
 
-function create_gamestate(){
-		//initialize events and activity to empty
-		activity = {};events = [];
-		return { green: { pos: Settings.POS_INIT, v: 0 }, red: { pos: Settings.POS_INIT, v: 0 } }; 
+function create_gamestate() {
+	//initialize events and activity to empty
+	activity = {}; events = [];
+	return { green: { pos: Settings.POS_INIT, v: 0 }, red: { pos: Settings.POS_INIT, v: 0 } };
 }
 function update_gamestate(state) {
 	//hier wird current pos fuer green, red berechnet!
@@ -55,9 +55,9 @@ function contribute(color) {
 
 	//==>if current=0 (event noch nicht in diesem horizon vorgekommen) 
 
-	activity[color] = { color:color, 'timestamp': now, 'mag': current + (1 - current) * step }
-	console.log('events',events)
-	console.log('activity',activity[color]);
+	activity[color] = { color: color, 'timestamp': now, 'mag': current + (1 - current) * step }
+	//console.log('events',events)
+	//console.log('activity',activity[color]);
 }
 
 //var stop=false; //testing
@@ -68,28 +68,29 @@ function get_reaction(color, now = null) {
 	if (isdef(activity[color])) {
 		let e = activity[color];
 		let stren = event_strength(e, now);
-		val += e['mag'] * stren;
-		//if (!stop) {console.log('strength of activity',stren,'+ mag',e.mag,'=',val); stop=true;}
-
+		let inc = e.mag * stren;
+		val += inc; //add non-zero strength events
+		//console.log('inc', inc.toFixed(2));
+		//console.log('e.mag',e.mag.toFixed(2),'stren',stren.toFixed(2));
 	}
 
-	let i=0;
 	for (const e of events) {
 		if (e.color != color || e.mag == 0) continue;
 		let stren = event_strength(e, now);
 		//console.log('strength',stren)
 		if (stren == 0) {
 			e.mag = 0; //mark event to not process it again
-			i++; //purge 0 strength events
-		}else {
-			let inc = e['mag'] * stren;
-			//console.log('adding',inc,'to',val);
+		} else {
+			let inc = e.mag * stren;
 			val += inc; //add non-zero strength events
+			//console.log('inc', inc.toFixed(2));
+			//console.log('e.mag',e.mag.toFixed(2),'stren',stren.toFixed(2));
 		}
 	}
 
-	//console.log('==>val',color,val)
-	return val * Settings.SCALE;
+	//console.log('val', val.toFixed(2));	
+	//console.log();
+	return val * Settings.SCALE / (events.length+1);
 }
 function event_strength(e, now = null) {
 	if (!now) now = get_now();
@@ -100,7 +101,9 @@ function event_strength(e, now = null) {
 	T = Settings.HORIZON;
 	r = Settings.DECAY;
 
-	raw = Math.max(0., 1 - t / T) * Math.pow(0.5, (r * t / T));
+	raw = Math.max(0., 1 - t / T) * Math.pow(0.5, (r * t / T)); //halflife
+	//console.log('raw',raw)
+	
 	return Math.min(Math.max(0., raw), 1.); //relu
 
 }
