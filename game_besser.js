@@ -3,8 +3,8 @@ const Defaults = {
 	FR: 10, // frames per second
 	INTERVAL: 100, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
-	GREEN: 10, //pos increment per click of fbutton 
-	RED: 5,
+	GREEN: 25, //pos increment per click of fbutton 
+	RED: 25,
 	DECAY: 0.5, //signal strength decreasing at DECAY**(seconds since last event)
 	HORIZON: 10, //only events within last 10 secs are considered
 	V: 1, //stepsize? scale?
@@ -16,8 +16,8 @@ const Settings = {
 	FR: 10, // frames per second
 	INTERVAL: 100, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
-	GREEN: 10, //pos increment per click of fbutton 
-	RED: 5,
+	GREEN: 25, //pos increment per click of fbutton 
+	RED: 25,
 	DECAY: 0.5, //signal strength decreasing at DECAY**(seconds since last event)
 	HORIZON: 10, //only events within last 10 secs are considered
 	V: 1, //stepsize? scale?
