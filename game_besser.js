@@ -23,19 +23,23 @@ const Settings = {
 	V_DECAY: .05, //automatic decrement of decay per second
 };
 
-const E = { green: null, red: null }; //for each button, last click is timestamped
+var events = {green:[],red:[]}; // for each button, fifo timestamp,clientid,mag is recorded
 
-function create_gamestate() { return { green: { pos: Settings.POS_INIT, v: Settings.V_INIT }, red: { pos: Settings.POS_INIT, v: Settings.V_INIT } }; }
 
-function update_gamestate(state) {
-	if (!state) { return; }
-	for (const k of ['green', 'red']) if (state[k].pos > 0) calc_decay(state[k], (Settings.DECAY / Settings.FR), (Settings.V_DECAY / Settings.FR));
-	return false;
+function create_gamestate() { 
+	events=[];
+	return { green: { pos: Settings.POS_INIT, v: Settings.V_INIT }, red: { pos: Settings.POS_INIT, v: Settings.V_INIT } }; 
 }
 function process_event(state, color) {
 	record(state, color);
 	calc_event(state[color], color == 'green' ? Settings.PLUS : Settings.MINUS);
 	//if (state[color].pos > 100) state[color].pos = 100; //do it unten fuer verstaendlichkeit
+}
+
+function update_gamestate(state) {
+	if (!state) { return; }
+	for (const k of ['green', 'red']) if (state[k].pos > 0) calc_decay(state[k], (Settings.DECAY / Settings.FR), (Settings.V_DECAY / Settings.FR));
+	return false;
 }
 function record(state, color) {
 	if (!E[color]) E[color] = {};

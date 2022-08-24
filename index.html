@@ -27,15 +27,15 @@
 			<div id="dAdminLeft">Cosensus</div>
 			<div id="dAdminMiddle"></div>
 			<div id="dAdminRight">
-				<i id='dExitButton' class="fa fa-reply text-muted bi" onclick="show_intro_screen()"></i>
-				<i id='dSettingsButton' style="opacity:0" class="fa fa-cog text-muted bi" onclick="show_settings()"></i>
+				<i id="dExitButton" class="fa fa-reply text-muted bi" onclick="show_intro_screen()"></i>
+				<i id="dSettingsButton" style="opacity: 0" class="fa fa-cog text-muted bi" onclick="show_settings()"></i>
 			</div>
 		</div>
 		<div id="dHeader" class="h-40 d-none">
 			<div class="d-flex flex-column align-items-center justify-content-center h-100">
 				<h1>Your Role:</h1>
-				<br />
-				<button type="submit" onclick="show_game_screen(true)" class="w-25 btn btn-success" id="bHost">Host</button>
+				<br /><br />
+				<button type="submit" onclick="show_game_screen(true)" class="w-25 btn btn-success" style="margin-bottom: 12px" id="bHost">Host</button>
 				<br />
 				<button type="submit" onclick="show_game_screen(false)" class="w-25 btn btn-success" id="bGuest">Guest</button>
 			</div>
@@ -43,9 +43,9 @@
 		<div id="dTable" class="w-100 m-0 p-2 d-none"></div>
 		<button id="dummy" class="dummy">dummy</button>
 
-		<!-- <div id="dSettings" class="w-100 m-0 p-2 d-none"></div> -->
-		<script src="/socket.io/socket.io.js"></script>
-		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script> -->
+		<!-- <script src="/socket.io/socket.io.js"></script> -->
+		<!-- <script src="./socket.io.min.js"></script> -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 		<script src="./start.js"></script>
 	</body>
 </html>
