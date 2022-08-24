@@ -1,7 +1,9 @@
 onload = start;
 function start() {
 
-	//TESTING = true; if (TESTING) { mClass('dTesting', 'd-flex'); }
+	//TESTING = 'besser'; if (TESTING) { mClass('dTesting', 'd-flex'); }
+	// ngrok auf anderen geht nur wenn TESTING NICHT true ist!!!
+	// aber live-server geht nur wenn TESTING true ist!
 
 	socket = TESTING ? socket = io('http://localhost:3000') : io();
 	socket.on('message', handle_message);

@@ -1,6 +1,6 @@
 
 // *** pick your version for functions here: ***
-var game_version = './game'; // das ist die wo ich versuche deine formeln zu replicaten
+var game_version = './game_besser'; // das ist die wo ich versuche deine formeln zu replicaten
 //var game_version = './game'; // das ist meine simple version
 
 //#region boilerplate
@@ -38,22 +38,22 @@ io.on('connection', client => {
 	client.on('pause', handle_pause);
 	client.on('resume', handle_resume);
 	client.on('reset', handle_reset);
-	client.on('fbutton', x=>handle_button(x,client.id));
+	client.on('fbutton', x => handle_button(x, client.id));
 	client.on('settings', handle_settings);
-	client.on('disconnect', x=>console.log(`${x} disconnected`));
-	client.on('ping', ()=>{if (state) client.emit('gamestate', JSON.stringify(state));});
+	client.on('disconnect', x => console.log(`${x} disconnected`));
+	client.on('ping', () => { if (state) client.emit('gamestate', JSON.stringify(state)); });
 
 });
-function handle_button(x,clientid) {
-	console.log(`button ${x} ${clientid}`)
+function handle_button(x, clientid) {
+	//console.log(`button ${x} ${clientid}`)
 	io.emit('message', { msg: `${x == 'green' ? 'fbutton' : 'minus'} from ${clientid}` });
 
-	process_event(state, x,clientid);
+	process_event(state, x, clientid);
 }
 function handle_connection(client) {
 	console.log('...connected:', client.id);
 	//console.log('Settings', Settings)
-	client.emit('settings', { id:client.id, settings: Settings, defaults: Defaults, msg: `welcome to the feedback server` });
+	client.emit('settings', { id: client.id, settings: Settings, defaults: Defaults, msg: `welcome to the feedback server` });
 
 	if (!state) state = create_gamestate();
 	startGameInterval(state);

@@ -4,7 +4,7 @@ function get_progressbar(dParent, color, sym) {
 	//color has to be a word (web color)
 	let id = getUID();
 	let d = mDiv(dParent, {}, id, null, 'grid_progressbar');
-	let button = mButton(sym, () => onclick_plus_minus(color), d, {w:30});
+	let button = mButton(sym, () => onclick_plus_minus(color), d, { w: 30 });
 	let d1 = mDiv(d, {}, null, null, 'progressbar');
 	let bar = mDiv(d1, { bg: color, w: 10 + '%' }, 'b_' + color, null, 'barstatus');
 	return { bar: bar, button: button, color: color, container: d };
@@ -141,8 +141,12 @@ function mGrid(rows, cols, dParent, styles = {}) {
 
 function show_settings() {
 	//TESTING!!!!!
-	if (nundef(settings) && TESTING && TESTING != 'fe') { settings = { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, V_DECAY: .05, V_INIT: 1, V_MIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)" }; }
-	if (nundef(settings) && TESTING && TESTING == 'fe') { settings = { POS_INIT: 0, HORIZON: 10, DECAY: 2, INTERVAL: 200, FR: 5, STEPSIZE: .6, SCALE: 1 }; }
+	if (nundef(settings) && TESTING) {
+		settings = TESTING == 'fe' ? { POS_INIT: 0, HORIZON: 10, DECAY: 2, INTERVAL: 200, FR: 5, STEPSIZE: .6, SCALE: 1 }
+			: TESTING == 'besser' ? { DECAY: 2, FR: 5, INTERVAL: 200, RED: 5, GREEN: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50 }
+				: { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)" }
+	} 
+
 	let dp = mBy('dSettings') ?? mDiv(dTable, { box: true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
 	mClear(dp);
 	// let dp1 = mDiv(dp, { align: 'center' })
@@ -155,8 +159,8 @@ function show_settings() {
 
 	let [dleft, dright] = [mDiv(dp1), mDiv(dp1)];
 
-	let lleft = 'pos_init decay plus minus horizon';
-	let lright = 'v_init v_decay v_min interval stepsize scale';
+	let lleft = 'pos_init decay plus green minus red horizon';
+	let lright = 'v vdecay vmin interval stepsize scale';
 	//let lines = 'exp_decay exp_green exp_red';
 	let d = dleft;
 	for (const k of toWords(lleft)) {
