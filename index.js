@@ -40,10 +40,37 @@ function onclick_settings_test() {
 	socket.emit('settings', { settings: settings });
 }
 
+const lastpos={};
+function setw(elem,goal,color) {
+
+	let g=Math.floor(goal);
+	let w=Math.floor(firstNumber(elem.style.width));
+	if (g == w) return;
+	let i = g>w?granularity:-granularity;
+
+	clearInterval(TO[color]);
+	TO[color] = setInterval(() => anim(elem, i, g), 10);
+
+	function anim(el, by, from, to, color) {
+		let x=from;
+		if (by < 0 && x <= to || by > 0 && x >= to) {
+			clearInterval(TO[color]);
+		} else {
+			x += by;
+			el.style.width = x + '%';
+		}
+	}
+}
+
 function paint_game(state) {
 	let [wgreen, wred] = [state.green.pos, state.red.pos];
 
-	// if (isdef(TO.animgreen)) TO.animgreen.can
+	//w is in percent, have to calc in pixel
+	
+	// setw(dgreen,wgreen,'green');
+	// setw(dred,wred,'red');
+
+	// if (isdef(TO.animgreen)) TO.animgreen.cancel();
 	// TO.animgreen = mAnimateTo(dgreen,'width',wgreen);
 
 	dgreen.style.width = wgreen + '%';

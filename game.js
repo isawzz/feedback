@@ -1,7 +1,7 @@
 //#region my version
 const Defaults = {
-	FR: 5, // frames per second
-	INTERVAL: 200, // in ms
+	FR: 10, // frames per second
+	INTERVAL: 100, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	PLUS: 10, //pos increment per click of plus 
 	MINUS: 5,
@@ -12,8 +12,8 @@ const Defaults = {
 };
 
 const Settings = {
-	FR: 5, // frames per second
-	INTERVAL: 200, // in ms
+	FR: 20, // frames per second
+	INTERVAL: 50, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	PLUS: 10, //pos increment per click of plus 
 	MINUS: 5,
