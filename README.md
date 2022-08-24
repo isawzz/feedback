@@ -4,7 +4,7 @@
 1. install node js: https://nodejs.org/en/download/
 (falls du es nicht schon hast)
 
-2. clone github from ... tbd
+2. clone github from https://github.com/isawzz/feedback
 
 3. open in vs code 
 
