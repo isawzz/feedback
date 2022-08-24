@@ -42,7 +42,7 @@ function process_event(state, color, clientid) {
 function calc_event(st, color, clientid, inc) {
 
 	let evs = lookup(events, [color, clientid]);
-	console.log('evs', evs);
+	//console.log('evs', evs);
 
 	if (evs) {
 		console.assert(isList(evs), 'aborting!!!!! evs is not a list!!!!!!!!!');
@@ -61,7 +61,7 @@ function calc_event(st, color, clientid, inc) {
 			// console.log('HORIZON', Settings.HORIZON * 1000);
 			if (diff < Settings.HORIZON) relevs.push(e); else e.timestamp = 0;
 		}
-		console.log('relevs', relevs);
+		//console.log('relevs', relevs);
 
 		// evs = evs.filter(x => Math.abs(get_now() - events.timestamp) < Settings.HORIZON / 1000);
 		// console.log('evs', evs.length);

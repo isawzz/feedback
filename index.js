@@ -10,7 +10,7 @@ function get_progressbar(dParent, color, sym) {
 	return { bar: bar, button: button, color: color, container: d };
 }
 function handle_message(x) {
-	console.log('from server:', x.msg);
+	//console.log('from server:', x.msg);
 	//Clientdata.id = x;
 }
 function handle_gamestate(gamestate) {
