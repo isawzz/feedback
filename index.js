@@ -19,10 +19,11 @@ function handle_gamestate(state) {
 	requestAnimationFrame(() => paint_game(state));
 }
 function handle_settings(x) {
-	//console.log('message from server:', x.msg);
+	console.log('message from server:', x.msg);
 	settings = x.settings;
 	defaults = x.defaults;
 	gamestate = x.state;
+	console.log('gamestate is',gamestate);
 	//console.log('settings:', settings);
 	//console.log('defaults:', defaults);
 	//Clientdata.id = x;
@@ -39,12 +40,13 @@ function onclick_settings_test() {
 	socket.emit('settings', { settings: settings });
 }
 function paint_game(state) {
+	if (nundef(state) && gamestate) state = gamestate;
 	dgreen.style.width = state.green.pos + '%';
 	dred.style.width = state.red.pos + '%';
 }
-function screen_transition(idnew, idold) {
+function screen_transition(idnew, idold, callback=null) {
 	if (isdef(idold)) mFade(idold, 500, () => mClassReplace(idold, 'd-block', 'd-none'), 'linear');
-	mAppear(idnew, 500, () => mClassReplace(idnew, 'd-none', 'd-block'), 'linear');
+	mAppear(idnew, 500, () => {mClassReplace(idnew, 'd-none', 'd-block');if (callback) callback();}, 'linear');
 }
 function send_reset() { socket.emit('reset'); }
 function send_pause() { socket.emit('pause'); }
@@ -60,7 +62,7 @@ function show_intro_screen() {
 function show_game_screen(host = true) {
 	if (in_game_screen) return;
 	in_game_screen = true;
-	screen_transition('dTable', 'dHeader');
+	screen_transition('dTable', 'dHeader', paint_game);
 	is_host = host;
 
 	//set granularity depending on screen size
@@ -86,7 +88,6 @@ function show_game_screen(host = true) {
 		mLinebreak(dp, 20);
 		mBy('dSettingsButton').style.opacity = 1;
 	} 
-	if (gamestate) paint_game(gamestate);
 }
 function show_settings() {
 	//TESTING!!!!!
