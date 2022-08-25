@@ -2,7 +2,7 @@ onload = start;
 function start() {
 
 	//TESTING = 'besser'; if (TESTING) { mClass('dTesting', 'd-flex'); }
-	// ngrok auf anderen geht nur wenn TESTING NICHT true ist!!!
+	// ngrok und heroku geht nur wenn TESTING NICHT true ist!!!
 	// aber live-server geht nur wenn TESTING true ist!
 
 	socket = TESTING ? socket = io('http://localhost:3000') : io(); //das zweite sollte gehen!

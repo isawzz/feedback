@@ -1,4 +1,4 @@
-var is_host, socket, settings, defaults, dgreen, dred, in_game_screen, lastgreen = 0, lastred = 0, granularity, num_calls = 0, num_painted = 0;
+var gamestate=null, is_host, socket, settings, defaults, dgreen, dred, in_game_screen, lastgreen = 0, lastred = 0, granularity, num_calls = 0, num_painted = 0;
 
 function get_progressbar(dParent, color, sym) {
 	//color has to be a word (web color)
@@ -10,18 +10,19 @@ function get_progressbar(dParent, color, sym) {
 	return { bar: bar, button: button, color: color, container: d };
 }
 function handle_message(x) {
-	//console.log('from server:', x.msg);
-	//Clientdata.id = x;
+	//console.log('from server:', x);
 }
-function handle_gamestate(gamestate) {
+function handle_gamestate(state) {
 	if (!in_game_screen) { return; } //console.log('intro');
-	gamestate = JSON.parse(gamestate); //from server is sent as string
-	requestAnimationFrame(() => paint_game(gamestate));
+	//state = JSON.parse(state); //from server is sent as string
+	gamestate = state;
+	requestAnimationFrame(() => paint_game(state));
 }
 function handle_settings(x) {
 	//console.log('message from server:', x.msg);
 	settings = x.settings;
 	defaults = x.defaults;
+	gamestate = x.state;
 	//console.log('settings:', settings);
 	//console.log('defaults:', defaults);
 	//Clientdata.id = x;
@@ -37,47 +38,9 @@ function onclick_settings_test() {
 	console.log('settings', settings);
 	socket.emit('settings', { settings: settings });
 }
-
-const lastpos = {};
-function setw(elem, goal, color) {
-
-	let g = Math.floor(goal);
-	let w = Math.floor(firstNumber(elem.style.width));
-	if (g == w) return;
-	let i = g > w ? granularity : -granularity;
-
-	clearInterval(TO[color]);
-	TO[color] = setInterval(() => anim(elem, i, g), 10);
-
-	function anim(el, by, from, to, color) {
-		let x = from;
-		if (by < 0 && x <= to || by > 0 && x >= to) {
-			clearInterval(TO[color]);
-		} else {
-			x += by;
-			el.style.width = x + '%';
-		}
-	}
-}
-
 function paint_game(state) {
-	let [wgreen, wred] = [state.green.pos, state.red.pos];
-
-	//w is in percent, have to calc in pixel
-
-	// setw(dgreen,wgreen,'green'); //neeee!
-	// setw(dred,wred,'red');
-
-	// if (isdef(TO.animgreen)) TO.animgreen.cancel(); //scheusslich
-	// TO.animgreen = mAnimateTo(dgreen,'width',wgreen);
-
-	dgreen.style.width = wgreen + '%';
-	dred.style.width = wred + '%';
-
-	// num_calls++;
-	// if (Math.abs(lastgreen - wgreen) > granularity) { dgreen.style.width = wgreen + '%'; num_painted += .5; lastgreen = wgreen; }
-	// if (Math.abs(lastred - wred) > granularity) { dred.style.width = wred + '%'; num_painted += .5; lastred = wred; }
-
+	dgreen.style.width = state.green.pos + '%';
+	dred.style.width = state.red.pos + '%';
 }
 function screen_transition(idnew, idold) {
 	if (isdef(idold)) mFade(idold, 500, () => mClassReplace(idold, 'd-block', 'd-none'), 'linear');
@@ -122,29 +85,15 @@ function show_game_screen(host = true) {
 		mButton('resume', send_resume, d1, {}, 'button');
 		mLinebreak(dp, 20);
 		mBy('dSettingsButton').style.opacity = 1;
-	} else {
-		//mButton('ping', send_ping, d1, {}, 'button');
-		send_ping();
-	}
+	} 
+	if (gamestate) paint_game(gamestate);
 }
-
-
-function mGrid(rows, cols, dParent, styles = {}) {
-	//styles.gap=valf(styles.gap,4);
-	let d = mDiv(dParent, styles);
-	d.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
-	d.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
-	d.style.display = 'inline-grid';
-	d.style.padding = valf(styles.padding, styles.gap) + 'px';
-	return d;
-}
-
 function show_settings() {
 	//TESTING!!!!!
 	if (nundef(settings) && TESTING) {
-		settings = TESTING == 'fe' ? { POS_INIT: 0, HORIZON: 10, DECAY: 2, INTERVAL: 200, FR: 5, STEPSIZE: .6, SCALE: 1 }
-			: TESTING == 'besser' ? { DECAY: 2, FR: 5, INTERVAL: 200, RED: 5, GREEN: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50 }
-				: { DECAY: 2, FR: 5, INTERVAL: 200, MINUS: 5, PLUS: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)" }
+		settings = TESTING == 'fe' ? { POS_INIT: 0, HORIZON: 10, DECAY: 2, INTERVAL: 200, STEPSIZE: .6, SCALE: 1 }
+			: TESTING == 'besser' ? { DECAY: 2, INTERVAL: 200, RED: 5, GREEN: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50 }
+				: { DECAY: 2, INTERVAL: 200, MINUS: 5, PLUS: 10, VDECAY: .05, V: 1, VMIN: 0.25, POS_INIT: 50, exp_decay: "x * Math.pow((1 - DECAY)" }
 	} 
 
 	let dp = mBy('dSettings') ?? mDiv(dTable, { box: true, margin: 10, padding: 20 }, 'dSettings', null, 'card');
@@ -168,8 +117,8 @@ function show_settings() {
 		let val = settings[key];
 		//console.log('key', key, val)
 		if (nundef(val)) continue;
-		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
-		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
+		let di = mDiv(d, { wmin: 200 }, null, null, ['coinput', 'd-flex']);
+		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' (ms)' : k) + ':';
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
 		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);
 	}
@@ -178,8 +127,8 @@ function show_settings() {
 		let key = k.toUpperCase();
 		let val = settings[key];
 		if (nundef(val)) continue;
-		let di = mDiv(d, { w: 300 }, null, null, ['coinput', 'd-flex']);
-		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' in ms' : k) + ':';
+		let di = mDiv(d, { wmin: 200 }, null, null, ['coinput', 'd-flex']);
+		let label = (k.includes('decay') ? k + '/s' : k == 'interval' ? k + ' (ms)' : k) + ':';
 		//console.log('key', key, val)
 		//let val = k.includes('decay')?settings[key]*1000/settings.INTERVAL:settings[key];
 		let dn = mEditNumber(label, val, di, null, { w: '100%' }, null, `i_${k}`);

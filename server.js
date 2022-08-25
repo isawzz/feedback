@@ -1,7 +1,8 @@
 
 // *** pick your version for functions here: ***
-var game_version = './game_besser'; // das ist die wo ich versuche deine formeln zu replicaten
-//var game_version = './game'; // das ist meine simple version
+var game_version = './game_besser'; // similar to fe version
+//var game_version = './game_fe'; // attempt to replicate fe version
+//var game_version = './game'; // primitive version
 
 //#region boilerplate
 const express = require('express');
@@ -41,39 +42,33 @@ io.on('connection', client => {
 	client.on('fbutton', x => handle_button(x, client.id));
 	client.on('settings', handle_settings);
 	client.on('disconnect', x => console.log(`${x} disconnected`));
-	client.on('ping', () => { if (state) client.emit('gamestate', JSON.stringify(state)); });
 
 });
-function handle_button(x, clientid) {
-	//console.log(`button ${x} ${clientid}`)
-	io.emit('message', { msg: `${x == 'green' ? 'fbutton' : 'minus'} from ${clientid}` });
-
-	process_event(state, x, clientid);
-}
 function handle_connection(client) {
 	console.log('...connected:', client.id);
-	//console.log('Settings', Settings)
-	client.emit('settings', { id: client.id, settings: Settings, defaults: Defaults, msg: `welcome to the feedback server` });
-
 	if (!state) state = create_gamestate();
-	startGameInterval(state);
-	client.emit('gamestate', JSON.stringify(state));
+	start_interval(state);
+	client.emit('settings', { id: client.id, state: state, settings: Settings, defaults: Defaults, msg: `welcome to the feedback server` });
+}
+function handle_button(x, clientid) {
+	io.emit('message', `${x == 'green' ? 'plus' : 'minus'} from ${clientid}`);
+	process_event(state, x, clientid);
 }
 function handle_pause() {
 	console.log('pause');
-	clearInterval(intervalId); game_running = false;
+	stop_interval();
 	io.emit('message', { msg: 'feedback server paused' });
 }
 function handle_reset() {
 	console.log('reset');
-	clearInterval(intervalId); game_running = false;
+	stop_interval();
 	state = create_gamestate();
-	startGameInterval(state);
+	start_interval(state);
 	io.emit('message', { msg: 'feedback server reset' });
 }
 function handle_resume() {
 	console.log('resume');
-	startGameInterval(state);
+	start_interval(state);
 	io.emit('message', { msg: 'feedback server running' });
 }
 function handle_settings(x) {
@@ -83,7 +78,8 @@ function handle_settings(x) {
 	update_settings(s);
 	handle_reset();
 }
-function startGameInterval(state) {
+function stop_interval(){clearInterval(intervalId); game_running = false;}
+function start_interval(state) {
 	if (game_running) return;
 	game_running = true;
 	intervalId = setInterval(() => {
@@ -91,11 +87,10 @@ function startGameInterval(state) {
 		let end = update_gamestate(state);
 		//console.log('state:', state);
 		if (!end) {
-			io.emit('gamestate', JSON.stringify(state));
+			io.emit('gamestate', state); 
 		} else {
 			io.emit('gameover');
 			clearInterval(intervalId); game_running = false;
-
 		}
 
 	}, Settings.INTERVAL);

@@ -1,7 +1,6 @@
 
 //#region fe version
 const Defaults = {
-	FR: 5, // frames per second
 	INTERVAL: 200, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	HORIZON: 10, //secs to take into consideration
@@ -11,7 +10,6 @@ const Defaults = {
 };
 
 const Settings = {
-	FR: 5, // frames per second
 	INTERVAL: 200, // in ms
 	POS_INIT: 0, // macht hier keinen sinn != 0
 	HORIZON: 10, //secs to take into consideration
@@ -22,6 +20,7 @@ const Settings = {
 
 var activity = {};
 var events = [];
+var framerate = 1000/Settings.INTERVAL;
 
 function create_gamestate() {
 	//initialize events and activity to empty
@@ -110,9 +109,8 @@ function event_strength(e, now = null) {
 
 
 function update_settings(snew) {
-	let intnew = snew.INTERVAL;
-	if (intnew != Settings.INTERVAL) { Settings.FR = 1000 / intnew; }
-	for (const k in snew) { if (k != 'FR') Settings[k] = snew[k]; }
+	for (const k in snew) { Settings[k] = snew[k]; }
+	framerate = 1000 / Settings.INTERVAL;
 }
 function isdef(x) { return x !== null && x !== undefined; }
 function nundef(x) { return x === null || x === undefined; }

@@ -1,6 +1,5 @@
 //#region my version
 const Defaults = {
-	FR: 10, // frames per second
 	INTERVAL: 100, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	GREEN: 25, //pos increment per click of fbutton 
@@ -13,7 +12,6 @@ const Defaults = {
 };
 
 const Settings = {
-	FR: 10, // frames per second
 	INTERVAL: 100, // in ms
 	POS_INIT: 50, // initial progressbar position at reset, unit: %
 	GREEN: 25, //pos increment per click of fbutton 
@@ -26,7 +24,8 @@ const Settings = {
 };
 
 const events = {}; // for each button, for each id timestamp,color,clientid,mag is recorded
-var tlast;
+var tlast, framerate = 1000/Settings.INTERVAL;
+;
 
 function create_gamestate() {
 	delete events.green; delete events.red;
@@ -39,6 +38,13 @@ function process_event(state, color, clientid) {
 	record(color, clientid, mag);
 	tlast = get_now();
 }
+function update_gamestate(state) {
+	if (!state) { return; }
+	for (const k of ['green', 'red']) if (state[k].pos > 0) calc_decay(state[k]);
+	return false;
+}
+
+
 function calc_event(st, color, clientid, inc) {
 
 	let evs = lookup(events, [color, clientid]);
@@ -76,34 +82,22 @@ function calc_event(st, color, clientid, inc) {
 
 	return inc;
 }
-
-function get_secs_since_last_event() { return (get_now() - tlast) / 1000; }
-function get_sec_diff(t1,t2) { return Math.abs(t1-t2) / 1000; }
-function update_gamestate(state) {
-	if (!state) { return; }
-	for (const k of ['green', 'red']) if (state[k].pos > 0) calc_decay(state[k]);
-	return false;
-}
-function record(color, clientid, mag) {
-	lookupAddToList(events, [color, clientid], { timestamp: get_now() }); //,color:color,clientid:clientid,mag:mag})
-}
-
-// *** update formulas for decay and click event ***
-//2. decay soll solange nicht geclickt wird immer langsamer werden
 function calc_decay(st) {
 	st.pos -= Settings.DECAY * st.v;
 	st.v *= Math.pow(1 - Settings.VDECAY, get_secs_since_last_event());
 	if (st.v < Settings.VMIN) st.v = Settings.VMIN;
 }
-
-
-
-//#region helpers
-function update_settings(snew) {
-	let intnew = snew.INTERVAL;
-	if (intnew != Settings.INTERVAL) { Settings.FR = 1000 / intnew; }
-	for (const k in snew) { if (k != 'FR') Settings[k] = snew[k]; }
+function get_secs_since_last_event() { return (get_now() - tlast) / 1000; }
+function get_sec_diff(t1,t2) { return Math.abs(t1-t2) / 1000; }
+function record(color, clientid, mag) {
+	lookupAddToList(events, [color, clientid], { timestamp: get_now() }); //,color:color,clientid:clientid,mag:mag})
 }
+function update_settings(snew) {
+	for (const k in snew) { Settings[k] = snew[k]; }
+	framerate = 1000 / Settings.INTERVAL;
+}
+
+//#region utilities
 function get_now() { return Date.now(); }
 function isdef(x) { return x !== null && x !== undefined; }
 function isEmpty(arr) {

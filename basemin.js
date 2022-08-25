@@ -1,5 +1,6 @@
 
 
+
 //#region globals: Session data
 var SOCKETSERVER = 'http://localhost:5000'; //geht im spital
 var SERVER = "http://localhost:8080/aroot/simple"; // oder telecave!
@@ -698,6 +699,15 @@ function mEditableInput(dParent, label, val, styles, classes, id) {
 	return elem;
 }
 //#endregion
+function mGrid(rows, cols, dParent, styles = {}) {
+	//styles.gap=valf(styles.gap,4);
+	let d = mDiv(dParent, styles);
+	d.style.gridTemplateColumns = 'repeat(' + cols + ',1fr)';
+	d.style.gridTemplateRows = 'repeat(' + rows + ',1fr)';
+	d.style.display = 'inline-grid';
+	d.style.padding = valf(styles.padding, styles.gap) + 'px';
+	return d;
+}
 function mFlexEvenly(d) {
 	let styles = { display: 'flex' };
 	styles['justify-content'] = 'space-evenly';
