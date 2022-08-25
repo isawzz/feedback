@@ -5,7 +5,7 @@ function start() {
 	// ngrok auf anderen geht nur wenn TESTING NICHT true ist!!!
 	// aber live-server geht nur wenn TESTING true ist!
 
-	socket = TESTING ? socket = io('http://localhost:3000') : io();
+	socket = TESTING ? socket = io('http://localhost:3000') : io(); //das zweite sollte gehen!
 	socket.on('message', handle_message);
 	socket.on('gamestate', handle_gamestate);
 	socket.on('settings', handle_settings);
