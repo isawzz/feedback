@@ -7,9 +7,9 @@ const Defaults = {
 	RED: 25,
 	DECAY: 0.5, //signal strength decreasing at DECAY**(seconds since last event)
 	HORIZON: 10, //only events within last 10 secs are considered
-	V: 1, //stepsize? scale?
+	V: .5, //stepsize? scale?
 	VDECAY: .01, //automatic decrement decay when no events
-	VMIN: .2,
+	VMIN: .18,
 };
 
 const Settings = {
@@ -20,9 +20,9 @@ const Settings = {
 	RED: 25,
 	DECAY: 0.5, //signal strength decreasing at DECAY**(seconds since last event)
 	HORIZON: 10, //only events within last 10 secs are considered
-	V: 1, //stepsize? scale?
+	V: .5, //stepsize? scale?
 	VDECAY: .01, //automatic decrement decay when no events
-	VMIN: .2,
+	VMIN: .18,
 };
 
 const events = {}; // for each button, for each id timestamp,color,clientid,mag is recorded
