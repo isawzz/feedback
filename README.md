@@ -3,6 +3,8 @@
 
 ==> geht jetzt auch auf heroku: https://feedbackserver.herokuapp.com/
 
+## to run it locally w/ ngrok:
+
 1. install node js: https://nodejs.org/en/download/
 (falls du es nicht schon hast)
 

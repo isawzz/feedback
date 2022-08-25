@@ -84,6 +84,7 @@ function calc_event(st, color, clientid, inc) {
 }
 function calc_decay(st) {
 	st.pos -= Settings.DECAY * st.v;
+	if (st.pos < 0) st.pos = 0;
 	st.v *= Math.pow(1 - Settings.VDECAY, get_secs_since_last_event());
 	if (st.v < Settings.VMIN) st.v = Settings.VMIN;
 }
